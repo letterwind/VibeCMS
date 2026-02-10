@@ -1,0 +1,245 @@
+/* 基礎側邊欄樣式 */
+.app-sidebar {
+  position: fixed;
+  top: 60px;
+  left: 0;
+  width: 250px;
+  height: calc(100vh - 60px);
+  background-color: #212529;
+  z-index: 1020;
+  transition: transform 0.3s ease;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+.sidebar-menu {
+  padding: 0.5rem 0;
+  list-style: none;
+  margin: 0;
+}
+
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-brand {
+  color: #fff;
+  font-weight: 600;
+  font-size: 1.125rem;
+  display: flex;
+  align-items: center;
+}
+
+.sidebar-footer {
+  padding: 0.75rem 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  text-align: center;
+  margin-top: auto;
+}
+
+/* 自訂捲軸樣式 */
+.app-sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.app-sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.app-sidebar::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+}
+
+.app-sidebar::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+/* 導覽連結樣式 */
+.nav-link {
+  color: rgba(255, 255, 255, 0.8);
+  padding: 0.75rem 1.25rem;
+  transition: all 0.2s ease;
+  border-left: 3px solid transparent;
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.nav-link-content {
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  flex: 1;
+}
+
+.nav-icon {
+  width: 20px;
+  margin-right: 0.75rem;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.nav-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nav-link:hover {
+  color: #fff;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.nav-link.active {
+  color: #fff;
+  background-color: rgba(13, 110, 253, 0.3);
+  border-left-color: #0d6efd;
+}
+
+/* 子選單樣式 */
+.collapse-icon {
+  transition: transform 0.2s ease;
+  font-size: 0.75rem;
+  flex-shrink: 0;
+}
+
+.nav-link.collapsed .collapse-icon {
+  transform: rotate(-90deg);
+}
+
+.submenu {
+  background-color: rgba(0, 0, 0, 0.2);
+  display: none;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.submenu.show {
+  display: block;
+}
+
+.submenu .nav-link {
+  padding-left: 3rem;
+  font-size: 0.9rem;
+  border-left: none;
+}
+
+.submenu .nav-link.active {
+  background-color: rgba(13, 110, 253, 0.2);
+  border-left: none;
+}
+
+/* 遮罩層樣式 */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.sidebar-overlay.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* 桌面版樣式 (>= 992px) */
+.desktop-sidebar {
+  transform: translateX(0);
+}
+
+@media (min-width: 992px) {
+  .app-sidebar {
+    transform: translateX(0);
+  }
+  
+  .sidebar-header {
+    display: none;
+  }
+  
+  .sidebar-overlay {
+    display: none !important;
+  }
+}
+
+/* 平板版樣式 (768px - 991px) */
+@media (min-width: 768px) and (max-width: 991.98px) {
+  .app-sidebar {
+    transform: translateX(-100%);
+    top: 0;
+    height: 100vh;
+    z-index: 1040;
+    width: 280px;
+    pointer-events: none;
+  }
+  
+  .app-sidebar.show {
+    transform: translateX(0);
+    pointer-events: auto;
+  }
+  
+  .sidebar-header {
+    display: flex;
+    padding-top: 1.25rem;
+  }
+  
+  .sidebar-overlay {
+    display: block;
+  }
+}
+
+/* 手機版樣式 (< 768px) */
+@media (max-width: 767.98px) {
+  .app-sidebar {
+    transform: translateX(-100%);
+    top: 0;
+    height: 100vh;
+    z-index: 1040;
+    width: 85%;
+    max-width: 300px;
+    pointer-events: none;
+  }
+  
+  .app-sidebar.show {
+    transform: translateX(0);
+    pointer-events: auto;
+  }
+  
+  .sidebar-header {
+    display: flex;
+  }
+  
+  .sidebar-overlay {
+    display: block;
+  }
+  
+  .submenu .nav-link {
+    padding-left: 2.5rem;
+  }
+}
+
+/* 超小螢幕 (< 576px) */
+@media (max-width: 575.98px) {
+  .app-sidebar {
+    width: 100%;
+    max-width: 100%;
+  }
+}

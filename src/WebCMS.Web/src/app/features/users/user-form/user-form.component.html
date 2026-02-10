@@ -1,0 +1,132 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <!-- 帳號 -->
+  <div class="mb-3">
+    <label for="account" class="form-label"
+      >帳號 <span class="text-danger">*</span></label
+    >
+    <input
+      type="text"
+      class="form-control"
+      id="account"
+      formControlName="account"
+      [readonly]="isEditing"
+      [class.is-invalid]="isFieldInvalid('account')"
+      [class.is-valid]="isFieldValid('account')"
+    />
+    <div class="form-text">6-12 字元，必須包含大寫、小寫字母及數字</div>
+    <app-validation-error
+      [control]="form.get('account')"
+      [fieldName]="'帳號'"
+      [customMessages]="{
+        accountFormat:
+          form.get('account')?.errors?.['accountFormat'] || '帳號格式不正確',
+        serverValidation: form.get('account')?.errors?.['serverValidation'],
+      }"
+    >
+    </app-validation-error>
+  </div>
+
+  <!-- 密碼 -->
+  <div class="mb-3">
+    <label for="password" class="form-label">
+      {{ isEditing ? "新密碼" : "密碼" }}
+      @if (!isEditing) {
+        <span class="text-danger">*</span>
+      }
+    </label>
+    <input
+      type="password"
+      class="form-control"
+      id="password"
+      formControlName="password"
+      [class.is-invalid]="isFieldInvalid('password')"
+      [class.is-valid]="isFieldValid('password')"
+    />
+    <div class="form-text">
+      @if (isEditing) {
+        留空表示不變更密碼。
+      }
+      6-12 字元，必須包含大寫、小寫字母及數字，不得包含帳號
+    </div>
+    <app-validation-error
+      [control]="form.get('password')"
+      [fieldName]="'密碼'"
+      [customMessages]="{
+        passwordFormat:
+          form.get('password')?.errors?.['passwordFormat'] || '密碼格式不正確',
+        passwordContainsAccount: '密碼不得包含帳號內容',
+        serverValidation: form.get('password')?.errors?.['serverValidation'],
+      }"
+    >
+    </app-validation-error>
+  </div>
+
+  <!-- 顯示名稱 -->
+  <div class="mb-3">
+    <label for="displayName" class="form-label"
+      >顯示名稱 <span class="text-danger">*</span></label
+    >
+    <input
+      type="text"
+      class="form-control"
+      id="displayName"
+      formControlName="displayName"
+      maxlength="100"
+      [class.is-invalid]="isFieldInvalid('displayName')"
+    />
+    <div class="form-text">最多 100 字元</div>
+    <app-validation-error
+      [control]="form.get('displayName')"
+      [fieldName]="'顯示名稱'"
+    >
+    </app-validation-error>
+  </div>
+
+  <!-- 角色 -->
+  <div class="mb-3">
+    <label class="form-label">角色</label>
+    <div class="border rounded p-2" style="max-height: 200px; overflow-y: auto">
+      @for (role of roles; track role.id) {
+        <div class="form-check">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            [id]="'role-' + role.id"
+            [checked]="isRoleSelected(role.id)"
+            (change)="toggleRole(role.id)"
+          />
+          <label class="form-check-label" [for]="'role-' + role.id">
+            {{ role.name }}
+            @if (role.description) {
+              <small class="text-muted">- {{ role.description }}</small>
+            }
+          </label>
+        </div>
+      }
+      @if (roles.length === 0) {
+        <div class="text-muted">無可用角色</div>
+      }
+    </div>
+  </div>
+
+  <!-- 錯誤訊息 -->
+  @if (errorMessage) {
+    <div class="alert alert-danger">{{ errorMessage }}</div>
+  }
+
+  <div class="d-flex justify-content-end gap-2 mt-4">
+    <button type="button" class="btn btn-secondary" (click)="onCancel.emit()">
+      取消
+    </button>
+    <button
+      type="submit"
+      class="btn btn-primary"
+      [disabled]="isSubmitting || (!isEditing && form.invalid)"
+    >
+      @if (isSubmitting) {
+        <span class="spinner-border spinner-border-sm me-1"></span>
+      }
+      {{ isEditing ? "更新" : "建立" }}
+    </button>
+  </div>
+</form>

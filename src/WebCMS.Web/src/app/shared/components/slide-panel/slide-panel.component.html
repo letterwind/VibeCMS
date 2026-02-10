@@ -1,0 +1,28 @@
+<div
+  class="slide-panel-backdrop"
+  [class.show]="isOpen"
+  (click)="onBackdropClick()"
+></div>
+<div
+  class="slide-panel"
+  [class.show]="isOpen"
+  [ngClass]="'slide-panel-' + size"
+>
+  <div
+    class="slide-panel-header d-flex justify-content-between align-items-center p-3 border-bottom"
+  >
+    <h5 class="mb-0">{{ title }}</h5>
+    <button
+      type="button"
+      class="btn-close"
+      (click)="close()"
+      aria-label="關閉"
+    ></button>
+  </div>
+  <div
+    class="slide-panel-body p-3"
+    style="height: calc(100% - 60px); overflow-y: auto"
+  >
+    <ng-content></ng-content>
+  </div>
+</div>

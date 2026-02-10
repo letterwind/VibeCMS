@@ -1,0 +1,189 @@
+<div class="container-fluid py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0"><i class="bi bi-shield-lock-fill me-2"></i>權限管理</h2>
+  </div>
+
+  <!-- Role Selection -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <div class="row g-3 align-items-center">
+        <div class="col-auto">
+          <label class="col-form-label fw-bold">選擇角色：</label>
+        </div>
+        <div class="col-md-4">
+          <select
+            class="form-select"
+            [(ngModel)]="selectedRoleId"
+            (change)="onRoleChange()"
+          >
+            <option [ngValue]="null">-- 請選擇角色 --</option>
+            <option *ngFor="let role of roles" [ngValue]="role.id">
+              {{ role.name }} (等級: {{ role.hierarchyLevel }})
+            </option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Permission Matrix -->
+  <div class="card" *ngIf="selectedRoleId">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <span> <i class="bi bi-table me-2"></i>權限設定矩陣 </span>
+      <button
+        class="btn btn-primary btn-sm"
+        (click)="savePermissions()"
+        [disabled]="saving"
+      >
+        <i class="bi bi-save me-1"></i>
+        {{ saving ? "儲存中..." : "儲存變更" }}
+      </button>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover mb-0">
+          <thead class="table-light">
+            <tr>
+              <th style="min-width: 250px">功能名稱</th>
+              <th class="text-center" style="width: 100px">
+                <div class="d-flex flex-column align-items-center">
+                  <span>新增</span>
+                  <small class="text-muted">(Create)</small>
+                </div>
+              </th>
+              <th class="text-center" style="width: 100px">
+                <div class="d-flex flex-column align-items-center">
+                  <span>讀取</span>
+                  <small class="text-muted">(Read)</small>
+                </div>
+              </th>
+              <th class="text-center" style="width: 100px">
+                <div class="d-flex flex-column align-items-center">
+                  <span>更新</span>
+                  <small class="text-muted">(Update)</small>
+                </div>
+              </th>
+              <th class="text-center" style="width: 100px">
+                <div class="d-flex flex-column align-items-center">
+                  <span>刪除</span>
+                  <small class="text-muted">(Delete)</small>
+                </div>
+              </th>
+              <th class="text-center" style="width: 80px">全選</th>
+            </tr>
+          </thead>
+          <tbody>
+            <ng-container *ngFor="let func of flattenedFunctions">
+              <tr [class.table-secondary]="func.level === 0">
+                <td [style.padding-left.px]="20 + func.level * 24">
+                  <i
+                    *ngIf="func.icon"
+                    [class]="'bi bi-' + func.icon + ' me-2'"
+                  ></i>
+                  <span [class.fw-bold]="func.level === 0">{{
+                    func.functionName
+                  }}</span>
+                  <small class="text-muted ms-2"
+                    >({{ func.functionCode }})</small
+                  >
+                </td>
+                <td class="text-center">
+                  <div class="form-check d-flex justify-content-center">
+                    <input
+                      class="form-check-input"
+                      type="checkbox"
+                      [(ngModel)]="func.canCreate"
+                      (change)="onPermissionChange(func)"
+                    />
+                  </div>
+                </td>
+                <td class="text-center">
+                  <div class="form-check d-flex justify-content-center">
+                    <input
+                      class="form-check-input"
+                      type="checkbox"
+                      [(ngModel)]="func.canRead"
+                      (change)="onPermissionChange(func)"
+                    />
+                  </div>
+                </td>
+                <td class="text-center">
+                  <div class="form-check d-flex justify-content-center">
+                    <input
+                      class="form-check-input"
+                      type="checkbox"
+                      [(ngModel)]="func.canUpdate"
+                      (change)="onPermissionChange(func)"
+                    />
+                  </div>
+                </td>
+                <td class="text-center">
+                  <div class="form-check d-flex justify-content-center">
+                    <input
+                      class="form-check-input"
+                      type="checkbox"
+                      [(ngModel)]="func.canDelete"
+                      (change)="onPermissionChange(func)"
+                    />
+                  </div>
+                </td>
+                <td class="text-center">
+                  <div class="form-check d-flex justify-content-center">
+                    <input
+                      class="form-check-input"
+                      type="checkbox"
+                      [checked]="isAllSelected(func)"
+                      (change)="toggleAll(func, $event)"
+                    />
+                  </div>
+                </td>
+              </tr>
+            </ng-container>
+          </tbody>
+        </table>
+      </div>
+
+      <div
+        *ngIf="flattenedFunctions.length === 0"
+        class="text-center text-muted py-4"
+      >
+        <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+        尚無功能項目
+      </div>
+    </div>
+  </div>
+
+  <!-- No Role Selected -->
+  <div class="card" *ngIf="!selectedRoleId">
+    <div class="card-body text-center text-muted py-5">
+      <i class="bi bi-arrow-up-circle fs-1 d-block mb-3"></i>
+      <p class="mb-0">請先選擇一個角色以設定權限</p>
+    </div>
+  </div>
+
+  <!-- Success/Error Messages -->
+  <div
+    *ngIf="message"
+    class="position-fixed bottom-0 end-0 p-3"
+    style="z-index: 1050"
+  >
+    <div
+      class="toast show"
+      [class.bg-success]="!isError"
+      [class.bg-danger]="isError"
+      [class.text-white]="true"
+    >
+      <div class="toast-body d-flex align-items-center">
+        <i
+          [class]="isError ? 'bi bi-x-circle me-2' : 'bi bi-check-circle me-2'"
+        ></i>
+        {{ message }}
+        <button
+          type="button"
+          class="btn-close btn-close-white ms-auto"
+          (click)="message = ''"
+        ></button>
+      </div>
+    </div>
+  </div>
+</div>

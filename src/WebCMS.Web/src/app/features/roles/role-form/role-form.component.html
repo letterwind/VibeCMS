@@ -1,0 +1,76 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <div class="mb-3">
+    <label for="name" class="form-label"
+      >角色名稱 <span class="text-danger">*</span></label
+    >
+    <input
+      type="text"
+      class="form-control"
+      id="name"
+      formControlName="name"
+      maxlength="50"
+      [class.is-invalid]="isFieldInvalid('name')"
+    />
+    <div class="form-text">最多 50 字元</div>
+    <app-validation-error [control]="form.get('name')" [fieldName]="'角色名稱'">
+    </app-validation-error>
+  </div>
+
+  <div class="mb-3">
+    <label for="description" class="form-label">描述</label>
+    <textarea
+      class="form-control"
+      id="description"
+      formControlName="description"
+      rows="3"
+      maxlength="200"
+      [class.is-invalid]="isFieldInvalid('description')"
+    >
+    </textarea>
+    <div class="form-text">最多 200 字元</div>
+    <app-validation-error
+      [control]="form.get('description')"
+      [fieldName]="'描述'"
+    >
+    </app-validation-error>
+  </div>
+
+  <div class="mb-3">
+    <label for="hierarchyLevel" class="form-label"
+      >階層等級 <span class="text-danger">*</span></label
+    >
+    <input
+      type="number"
+      class="form-control"
+      id="hierarchyLevel"
+      formControlName="hierarchyLevel"
+      min="1"
+      [class.is-invalid]="isFieldInvalid('hierarchyLevel')"
+    />
+    <div class="form-text">
+      數字越小權限越高（例如：1=Admin, 2=Manager, 3=User）
+    </div>
+    <app-validation-error
+      [control]="form.get('hierarchyLevel')"
+      [fieldName]="'階層等級'"
+      [customMessages]="{ min: '階層等級必須大於 0' }"
+    >
+    </app-validation-error>
+  </div>
+
+  <div class="d-flex justify-content-end gap-2 mt-4">
+    <button type="button" class="btn btn-secondary" (click)="onCancel.emit()">
+      取消
+    </button>
+    <button
+      type="submit"
+      class="btn btn-primary"
+      [disabled]="form.invalid || isSubmitting"
+    >
+      @if (isSubmitting) {
+        <span class="spinner-border spinner-border-sm me-1"></span>
+      }
+      {{ isEditing ? "更新" : "建立" }}
+    </button>
+  </div>
+</form>

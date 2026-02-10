@@ -1,0 +1,132 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <!-- Basic Info Section -->
+  <div class="mb-4">
+    <h6 class="text-muted mb-3">
+      <i class="bi bi-info-circle me-1"></i>基本資訊
+    </h6>
+    
+    <div class="mb-3">
+      <label for="name" class="form-label">分類名稱 <span class="text-danger">*</span></label>
+      <input type="text" 
+             class="form-control" 
+             id="name" 
+             formControlName="name"
+             maxlength="20"
+             [class.is-invalid]="isFieldInvalid('name')">
+      <div class="form-text">最多 20 字元 ({{ form.get('name')?.value?.length || 0 }}/20)</div>
+      <app-validation-error 
+        [control]="form.get('name')" 
+        [fieldName]="'分類名稱'">
+      </app-validation-error>
+    </div>
+
+    <div class="mb-3">
+      <label for="slug" class="form-label">網址代稱 <span class="text-danger">*</span></label>
+      <div class="input-group">
+        <span class="input-group-text">/category/</span>
+        <input type="text" 
+               class="form-control" 
+               id="slug" 
+               formControlName="slug"
+               maxlength="100"
+               [class.is-invalid]="isFieldInvalid('slug')"
+               (input)="onSlugInput($event)">
+      </div>
+      <div class="form-text">用於網址的代稱，僅允許英文、數字和連字號</div>
+      <app-validation-error 
+        [control]="form.get('slug')" 
+        [fieldName]="'網址代稱'"
+        [customMessages]="{pattern: '網址代稱僅允許英文、數字和連字號'}">
+      </app-validation-error>
+    </div>
+
+    <div class="mb-3">
+      <label for="parentId" class="form-label">父分類</label>
+      <select class="form-select" 
+              id="parentId" 
+              formControlName="parentId"
+              [class.is-invalid]="isFieldInvalid('parentId')">
+        <option [ngValue]="null">-- 無（根分類）--</option>
+        @for (cat of availableParents; track cat.id) {
+          <option [ngValue]="cat.id">
+            {{ cat.indent }}{{ cat.name }}
+          </option>
+        }
+      </select>
+      <div class="form-text">最多支援 3 層分類結構</div>
+    </div>
+
+    <div class="mb-3">
+      <label for="sortOrder" class="form-label">排序順序</label>
+      <input type="number" 
+             class="form-control" 
+             id="sortOrder" 
+             formControlName="sortOrder"
+             min="0">
+      <div class="form-text">數字越小排序越前面</div>
+    </div>
+  </div>
+
+  <!-- SEO Section -->
+  <div class="mb-4">
+    <h6 class="text-muted mb-3">
+      <i class="bi bi-search me-1"></i>SEO 設定
+    </h6>
+
+    <div class="mb-3">
+      <label for="metaTitle" class="form-label">SEO 標題</label>
+      <input type="text" 
+             class="form-control" 
+             id="metaTitle" 
+             formControlName="metaTitle"
+             maxlength="100"
+             [class.is-invalid]="isFieldInvalid('metaTitle')">
+      <div class="form-text">最多 100 字元，留空則使用分類名稱</div>
+      <app-validation-error 
+        [control]="form.get('metaTitle')" 
+        [fieldName]="'SEO 標題'">
+      </app-validation-error>
+    </div>
+
+    <div class="mb-3">
+      <label for="metaDescription" class="form-label">SEO 描述</label>
+      <textarea class="form-control" 
+                id="metaDescription" 
+                formControlName="metaDescription"
+                rows="3"
+                maxlength="200"
+                [class.is-invalid]="isFieldInvalid('metaDescription')">
+      </textarea>
+      <div class="form-text">最多 200 字元</div>
+      <app-validation-error 
+        [control]="form.get('metaDescription')" 
+        [fieldName]="'SEO 描述'">
+      </app-validation-error>
+    </div>
+
+    <div class="mb-3">
+      <label for="metaKeywords" class="form-label">SEO 關鍵字</label>
+      <input type="text" 
+             class="form-control" 
+             id="metaKeywords" 
+             formControlName="metaKeywords"
+             maxlength="200"
+             [class.is-invalid]="isFieldInvalid('metaKeywords')">
+      <div class="form-text">多個關鍵字請用逗號分隔，最多 200 字元</div>
+      <app-validation-error 
+        [control]="form.get('metaKeywords')" 
+        [fieldName]="'SEO 關鍵字'">
+      </app-validation-error>
+    </div>
+  </div>
+
+  <div class="d-flex justify-content-end gap-2 mt-4">
+    <button type="button" class="btn btn-secondary" (click)="onCancel.emit()">取消</button>
+    <button type="submit" class="btn btn-primary" [disabled]="form.invalid || isSubmitting">
+      @if (isSubmitting) {
+        <span class="spinner-border spinner-border-sm me-1"></span>
+      }
+      {{ isEditing ? '更新' : '建立' }}
+    </button>
+  </div>
+</form>

@@ -1,0 +1,17 @@
+.icon-grid {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 4px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.icon-btn {
+  padding: 8px;
+  font-size: 1.2rem;
+}
+
+.icon-btn.active {
+  background-color: var(--bs-primary);
+  color: white;
+}

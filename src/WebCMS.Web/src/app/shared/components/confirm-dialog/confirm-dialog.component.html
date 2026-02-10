@@ -1,0 +1,39 @@
+<div
+  class="modal fade"
+  [class.show]="isOpen"
+  [style.display]="isOpen ? 'block' : 'none'"
+  tabindex="-1"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header" [ngClass]="headerClass">
+        <h5 class="modal-title">
+          <i [class]="iconClass" class="me-2"></i>
+          {{ title }}
+        </h5>
+        <button
+          type="button"
+          class="btn-close"
+          (click)="cancel()"
+          aria-label="關閉"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <p>{{ message }}</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="cancel()">
+          {{ cancelText }}
+        </button>
+        <button
+          type="button"
+          [ngClass]="confirmButtonClass"
+          (click)="confirm()"
+        >
+          {{ confirmText }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-backdrop fade" [class.show]="isOpen" *ngIf="isOpen"></div>

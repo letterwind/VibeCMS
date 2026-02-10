@@ -1,0 +1,19 @@
+.toast {
+  min-width: 300px;
+  margin-bottom: 0.5rem;
+}
+
+.toast-header {
+  border-bottom: none;
+}
+
+.toast-header.bg-danger,
+.toast-header.bg-success,
+.toast-header.bg-info {
+  color: white;
+}
+
+.toast-body {
+  background-color: white;
+  border-radius: 0 0 0.375rem 0.375rem;
+}

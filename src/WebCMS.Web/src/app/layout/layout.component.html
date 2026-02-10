@@ -1,0 +1,28 @@
+<div class="app-layout" [class.sidebar-open]="sidebarOpen">
+  <!-- Header -->
+  <app-header (toggleSidebar)="toggleSidebar()" [deviceType]="deviceType">
+  </app-header>
+
+  <!-- Sidebar -->
+  <app-sidebar
+    [isOpen]="sidebarOpen"
+    [deviceType]="deviceType"
+    (closeSidebar)="closeSidebar()"
+  >
+  </app-sidebar>
+
+  <!-- Main content area -->
+  <main class="app-main" [class.sidebar-visible]="isSidebarVisible">
+    <div class="content-wrapper">
+      <router-outlet></router-outlet>
+    </div>
+
+    <!-- Footer -->
+    <app-footer></app-footer>
+  </main>
+
+  <!-- Mobile overlay when sidebar is open -->
+  @if (sidebarOpen && deviceType !== "desktop") {
+    <div class="sidebar-backdrop" (click)="closeSidebar()"></div>
+  }
+</div>

@@ -1,0 +1,199 @@
+<div class="container-fluid py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0"><i class="bi bi-menu-button-wide me-2"></i>功能管理</h2>
+    <div>
+      <button class="btn btn-outline-secondary me-2" (click)="toggleAll(true)">
+        <i class="bi bi-arrows-expand me-1"></i>全部展開
+      </button>
+      <button class="btn btn-outline-secondary me-2" (click)="toggleAll(false)">
+        <i class="bi bi-arrows-collapse me-1"></i>全部收起
+      </button>
+      <button class="btn btn-primary" (click)="openCreatePanel()">
+        <i class="bi bi-plus-lg me-1"></i>新增功能
+      </button>
+    </div>
+  </div>
+
+  <!-- Search -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-md-4">
+          <div class="input-group">
+            <span class="input-group-text">
+              <i class="bi bi-search"></i>
+            </span>
+            <input
+              type="text"
+              class="form-control"
+              placeholder="搜尋功能名稱或代碼..."
+              [(ngModel)]="searchTerm"
+              (keyup.enter)="search()"
+            />
+            <button class="btn btn-outline-secondary" (click)="search()">
+              搜尋
+            </button>
+            @if (searchTerm) {
+              <button class="btn btn-outline-danger" (click)="clearSearch()">
+                <i class="bi bi-x-lg"></i>
+              </button>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tree Table -->
+  <div class="card">
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead class="table-light">
+            <tr>
+              <th style="width: 300px">功能名稱</th>
+              <th>功能代碼</th>
+              <th style="width: 80px">圖示</th>
+              <th>連結網址</th>
+              <th style="width: 80px">新視窗</th>
+              <th style="width: 80px">排序</th>
+              <th style="width: 120px">操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            @if (isLoading) {
+              <tr>
+                <td colspan="7" class="text-center py-4">
+                  <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">載入中...</span>
+                  </div>
+                </td>
+              </tr>
+            } @else if (filteredFunctions.length === 0) {
+              <tr>
+                <td colspan="7" class="text-center py-4 text-muted">
+                  <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                  @if (searchTerm) {
+                    找不到符合「{{ searchTerm }}」的功能
+                  } @else {
+                    尚無功能資料
+                  }
+                </td>
+              </tr>
+            } @else {
+              <ng-container
+                *ngTemplateOutlet="
+                  treeRows;
+                  context: { $implicit: filteredFunctions, level: 0 }
+                "
+              ></ng-container>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tree Row Template -->
+  <ng-template #treeRows let-items let-level="level">
+    @for (item of items; track item.id) {
+      <tr [class.table-secondary]="level === 0 && hasChildren(item)">
+        <td>
+          <div
+            class="d-flex align-items-center"
+            [style.padding-left.px]="level * 24"
+          >
+            @if (hasChildren(item)) {
+              <button
+                class="btn btn-sm btn-link p-0 me-2 text-secondary"
+                (click)="toggleExpand(item.id)"
+                [attr.aria-expanded]="isExpanded(item.id)"
+                [attr.aria-label]="isExpanded(item.id) ? '收起' : '展開'"
+              >
+                <i
+                  class="bi"
+                  [class.bi-chevron-down]="isExpanded(item.id)"
+                  [class.bi-chevron-right]="!isExpanded(item.id)"
+                ></i>
+              </button>
+            } @else {
+              <span
+                class="me-2"
+                style="width: 16px; display: inline-block"
+              ></span>
+            }
+            <span [class.fw-semibold]="level === 0">{{ item.name }}</span>
+          </div>
+        </td>
+        <td>
+          <code class="text-primary">{{ item.code }}</code>
+        </td>
+        <td class="text-center">
+          @if (item.icon) {
+            <i [class]="item.icon"></i>
+          } @else {
+            <span class="text-muted">-</span>
+          }
+        </td>
+        <td>
+          @if (item.url) {
+            <small class="text-muted">{{ item.url }}</small>
+          } @else {
+            <span class="text-muted">-</span>
+          }
+        </td>
+        <td class="text-center">
+          @if (item.openInNewWindow) {
+            <i class="bi bi-check-circle-fill text-success"></i>
+          } @else {
+            <i class="bi bi-x-circle text-muted"></i>
+          }
+        </td>
+        <td class="text-center">{{ item.sortOrder }}</td>
+        <td>
+          <div class="btn-group btn-group-sm">
+            <button
+              class="btn btn-outline-primary"
+              (click)="openEditPanel(item)"
+              title="編輯"
+            >
+              <i class="bi bi-pencil"></i>
+            </button>
+            <button
+              class="btn btn-outline-danger"
+              (click)="deleteFunction(item)"
+              title="刪除"
+            >
+              <i class="bi bi-trash"></i>
+            </button>
+          </div>
+        </td>
+      </tr>
+      @if (hasChildren(item) && isExpanded(item.id)) {
+        <ng-container
+          *ngTemplateOutlet="
+            treeRows;
+            context: { $implicit: item.children, level: level + 1 }
+          "
+        ></ng-container>
+      }
+    }
+  </ng-template>
+
+  <!-- Slide Panel for Create/Edit -->
+  <app-slide-panel
+    [isOpen]="isPanelOpen"
+    [title]="isEditing ? '編輯功能' : '新增功能'"
+    size="md"
+    (onClose)="closePanel()"
+  >
+    <app-function-form
+      [function]="selectedFunction"
+      [parentFunctions]="parentFunctions"
+      [isEditing]="isEditing"
+      (onSave)="onSave($event)"
+      (onCancel)="closePanel()"
+    >
+    </app-function-form>
+  </app-slide-panel>
+</div>

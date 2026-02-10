@@ -1,0 +1,115 @@
+<aside
+  class="app-sidebar"
+  [class.show]="isOpen || deviceType === 'desktop'"
+  [class.mobile-sidebar]="deviceType === 'mobile'"
+  [class.tablet-sidebar]="deviceType === 'tablet'"
+  [class.desktop-sidebar]="deviceType === 'desktop'"
+  role="navigation"
+  aria-label="主要導覽"
+>
+  <!-- Overlay for mobile/tablet -->
+  @if (deviceType !== "desktop") {
+    <div
+      class="sidebar-overlay"
+      [class.show]="isOpen"
+      (click)="closeSidebar.emit()"
+      aria-hidden="true"
+    ></div>
+  }
+
+  <nav class="sidebar-nav">
+    <!-- Mobile/Tablet header with close button -->
+    @if (deviceType !== "desktop") {
+      <div class="sidebar-header">
+        <span class="sidebar-brand">
+          <i class="bi bi-grid-1x2-fill me-2"></i>
+          Web CMS
+        </span>
+        <button
+          type="button"
+          class="btn-close btn-close-white"
+          (click)="closeSidebar.emit()"
+          aria-label="關閉選單"
+        ></button>
+      </div>
+    }
+
+    <ul class="nav flex-column sidebar-menu">
+      <!-- Dashboard link -->
+      <li class="nav-item">
+        <a
+          class="nav-link"
+          routerLink="/admin/dashboard"
+          routerLinkActive="active"
+          (click)="onNavClick()"
+        >
+          <i class="bi bi-speedometer2 nav-icon"></i>
+          <span class="nav-text">儀表板</span>
+        </a>
+      </li>
+
+      <!-- Dynamic menu items -->
+      @for (item of menuItems; track item.id) {
+        @if (item.children && item.children.length > 0) {
+          <!-- Parent menu with children -->
+          <li class="nav-item has-submenu">
+            <a
+              class="nav-link d-flex justify-content-between align-items-center"
+              href="javascript:void(0)"
+              [attr.aria-expanded]="isExpanded(item.id)"
+              [class.collapsed]="!isExpanded(item.id)"
+              (click)="toggleMenu(item.id); $event.preventDefault()"
+            >
+              <span class="nav-link-content">
+                <i class="bi {{ item.icon || 'bi-folder' }} nav-icon"></i>
+                <span class="nav-text">{{ item.name }}</span>
+              </span>
+              <i class="bi bi-chevron-down collapse-icon"></i>
+            </a>
+            <ul
+              class="nav flex-column submenu"
+              [class.show]="isExpanded(item.id)"
+              id="submenu-{{ item.id }}"
+            >
+              @for (child of item.children; track child.id) {
+                <li class="nav-item">
+                  <a
+                    class="nav-link"
+                    [routerLink]="child.url"
+                    routerLinkActive="active"
+                    [target]="child.openInNewWindow ? '_blank' : '_self'"
+                    (click)="onNavClick()"
+                  >
+                    <i
+                      class="bi {{ child.icon || 'bi-file-earmark' }} nav-icon"
+                    ></i>
+                    <span class="nav-text">{{ child.name }}</span>
+                  </a>
+                </li>
+              }
+            </ul>
+          </li>
+        } @else {
+          <!-- Single menu item -->
+          <li class="nav-item">
+            <a
+              class="nav-link"
+              [routerLink]="item.url"
+              routerLinkActive="active"
+              [target]="item.openInNewWindow ? '_blank' : '_self'"
+              (click)="onNavClick()"
+            >
+              <i class="bi {{ item.icon || 'bi-file-earmark' }} nav-icon"></i>
+              <span class="nav-text">{{ item.name }}</span>
+            </a>
+          </li>
+        }
+      }
+    </ul>
+
+    <!-- Sidebar footer (optional) -->
+    <div class="sidebar-footer d-none d-lg-block">
+      <small class="text-muted">版本 1.0.0</small>
+    </div>
+  </nav>
+</aside>

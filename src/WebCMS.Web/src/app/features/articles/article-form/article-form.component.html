@@ -1,0 +1,214 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="p-3">
+  <!-- 標題 -->
+  <div class="mb-3">
+    <label for="title" class="form-label"
+      >文章標題 <span class="text-danger">*</span></label
+    >
+    <input
+      type="text"
+      class="form-control"
+      id="title"
+      formControlName="title"
+      [class.is-invalid]="
+        form.get('title')?.invalid && form.get('title')?.touched
+      "
+      maxlength="200"
+    />
+    <div class="form-text">
+      最多 200 字元 ({{ form.get("title")?.value?.length || 0 }}/200)
+    </div>
+    <app-validation-error
+      [control]="form.get('title')"
+      [fieldName]="'文章標題'"
+    >
+    </app-validation-error>
+  </div>
+
+  <!-- 網址代稱 -->
+  <div class="mb-3">
+    <label for="slug" class="form-label"
+      >網址代稱 <span class="text-danger">*</span></label
+    >
+    <div class="input-group">
+      <span class="input-group-text">/article/</span>
+      <input
+        type="text"
+        class="form-control"
+        id="slug"
+        formControlName="slug"
+        [class.is-invalid]="
+          form.get('slug')?.invalid && form.get('slug')?.touched
+        "
+        maxlength="200"
+      />
+    </div>
+    <app-validation-error [control]="form.get('slug')" [fieldName]="'網址代稱'">
+    </app-validation-error>
+  </div>
+
+  <!-- 分類 -->
+  <div class="mb-3">
+    <label for="categoryId" class="form-label"
+      >分類 <span class="text-danger">*</span></label
+    >
+    <select
+      class="form-select"
+      id="categoryId"
+      formControlName="categoryId"
+      [class.is-invalid]="
+        form.get('categoryId')?.invalid && form.get('categoryId')?.touched
+      "
+    >
+      <option value="">請選擇分類</option>
+      @for (category of categories; track category.id) {
+        <option [value]="category.id">
+          {{ getLevelPrefix(category.level) }}{{ category.name }}
+        </option>
+      }
+    </select>
+    <app-validation-error
+      [control]="form.get('categoryId')"
+      [fieldName]="'分類'"
+      [customMessages]="{ required: '請選擇分類' }"
+    >
+    </app-validation-error>
+  </div>
+
+  <!-- 標籤 -->
+  <div class="mb-3">
+    <label for="tags" class="form-label">標籤</label>
+    <div class="input-group">
+      <input
+        type="text"
+        class="form-control"
+        id="newTag"
+        [(ngModel)]="newTag"
+        [ngModelOptions]="{ standalone: true }"
+        placeholder="輸入標籤後按 Enter 或點擊新增"
+        (keydown.enter)="addTag($event)"
+      />
+      <button
+        class="btn btn-outline-secondary"
+        type="button"
+        (click)="addTag()"
+      >
+        <i class="bi bi-plus"></i> 新增
+      </button>
+    </div>
+    <div class="mt-2">
+      @for (tag of tags; track tag) {
+        <span class="badge bg-primary me-1 mb-1">
+          {{ tag }}
+          <button
+            type="button"
+            class="btn-close btn-close-white ms-1"
+            style="font-size: 0.6rem"
+            (click)="removeTag(tag)"
+          ></button>
+        </span>
+      }
+    </div>
+    @if (existingTags.length > 0) {
+      <div class="mt-2">
+        <small class="text-muted">建議標籤：</small>
+        @for (tag of existingTags; track tag) {
+          @if (!tags.includes(tag)) {
+            <button
+              type="button"
+              class="btn btn-sm btn-outline-secondary me-1 mb-1"
+              (click)="addExistingTag(tag)"
+            >
+              {{ tag }}
+            </button>
+          }
+        }
+      </div>
+    }
+  </div>
+
+  <!-- 內容 (TinyMCE) -->
+  <div class="mb-3">
+    <label for="content" class="form-label"
+      >文章內容 <span class="text-danger">*</span></label
+    >
+    <editor [init]="init" licenseKey="gpl" formControlName="content" />
+    <app-validation-error
+      [control]="form.get('content')"
+      [fieldName]="'文章內容'"
+    >
+    </app-validation-error>
+  </div>
+
+  <!-- SEO 設定 -->
+  <div class="card mb-3">
+    <div class="card-header"><i class="bi bi-search me-1"></i>SEO 設定</div>
+    <div class="card-body">
+      <div class="mb-3">
+        <label for="metaTitle" class="form-label">SEO 標題</label>
+        <input
+          type="text"
+          class="form-control"
+          id="metaTitle"
+          formControlName="metaTitle"
+          maxlength="100"
+        />
+        <div class="form-text">最多 100 字元</div>
+        <app-validation-error
+          [control]="form.get('metaTitle')"
+          [fieldName]="'SEO 標題'"
+        >
+        </app-validation-error>
+      </div>
+      <div class="mb-3">
+        <label for="metaDescription" class="form-label">SEO 描述</label>
+        <textarea
+          class="form-control"
+          id="metaDescription"
+          formControlName="metaDescription"
+          rows="2"
+          maxlength="200"
+        ></textarea>
+        <div class="form-text">最多 200 字元</div>
+        <app-validation-error
+          [control]="form.get('metaDescription')"
+          [fieldName]="'SEO 描述'"
+        >
+        </app-validation-error>
+      </div>
+      <div class="mb-3">
+        <label for="metaKeywords" class="form-label">SEO 關鍵字</label>
+        <input
+          type="text"
+          class="form-control"
+          id="metaKeywords"
+          formControlName="metaKeywords"
+          placeholder="以逗號分隔"
+          maxlength="200"
+        />
+        <div class="form-text">最多 200 字元，以逗號分隔</div>
+        <app-validation-error
+          [control]="form.get('metaKeywords')"
+          [fieldName]="'SEO 關鍵字'"
+        >
+        </app-validation-error>
+      </div>
+    </div>
+  </div>
+
+  <!-- 按鈕 -->
+  <div class="d-flex justify-content-end gap-2">
+    <button type="button" class="btn btn-secondary" (click)="onCancel.emit()">
+      取消
+    </button>
+    <button
+      type="submit"
+      class="btn btn-primary"
+      [disabled]="form.invalid || isSubmitting"
+    >
+      @if (isSubmitting) {
+        <span class="spinner-border spinner-border-sm me-1"></span>
+      }
+      {{ isEditing ? "更新" : "建立" }}
+    </button>
+  </div>
+</form>

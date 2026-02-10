@@ -1,0 +1,29 @@
+<div
+  class="toast-container position-fixed top-0 end-0 p-3"
+  style="z-index: 1100"
+>
+  @for (toast of notificationService.toasts(); track toast.id) {
+    <div
+      class="toast show"
+      role="alert"
+      aria-live="assertive"
+      aria-atomic="true"
+      [ngClass]="getToastClass(toast)"
+    >
+      <div class="toast-header" [ngClass]="getHeaderClass(toast)">
+        <i [class]="getIconClass(toast)" class="me-2"></i>
+        <strong class="me-auto">{{ getTitle(toast) }}</strong>
+        <button
+          type="button"
+          class="btn-close"
+          [class.btn-close-white]="toast.type !== 'warning'"
+          aria-label="關閉"
+          (click)="dismiss(toast)"
+        ></button>
+      </div>
+      <div class="toast-body">
+        {{ toast.message }}
+      </div>
+    </div>
+  }
+</div>

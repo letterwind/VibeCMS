@@ -1,0 +1,65 @@
+<div class="container-fluid py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0"><i class="bi bi-people-fill me-2"></i>角色管理</h2>
+    <button class="btn btn-primary" (click)="openCreatePanel()">
+      <i class="bi bi-plus-lg me-1"></i>新增角色
+    </button>
+  </div>
+
+  <!-- Search -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-md-4">
+          <div class="input-group">
+            <span class="input-group-text">
+              <i class="bi bi-search"></i>
+            </span>
+            <input
+              type="text"
+              class="form-control"
+              placeholder="搜尋角色名稱或描述..."
+              [(ngModel)]="searchTerm"
+              (keyup.enter)="search()"
+            />
+            <button class="btn btn-outline-secondary" (click)="search()">
+              搜尋
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Data Table -->
+  <div class="card">
+    <div class="card-body">
+      <app-data-table
+        [data]="roles"
+        [columns]="columns"
+        [pagination]="pagination"
+        [showActions]="true"
+        (onPageChange)="onPageChange($event)"
+        (onSort)="onSort($event)"
+        (onRowAction)="onRowAction($event)"
+      >
+      </app-data-table>
+    </div>
+  </div>
+
+  <!-- Slide Panel for Create/Edit -->
+  <app-slide-panel
+    [isOpen]="isPanelOpen"
+    [title]="isEditing ? '編輯角色' : '新增角色'"
+    size="md"
+    (onClose)="closePanel()"
+  >
+    <app-role-form
+      [role]="selectedRole"
+      [isEditing]="isEditing"
+      (onSave)="onSave($event)"
+      (onCancel)="closePanel()"
+    >
+    </app-role-form>
+  </app-slide-panel>
+</div>

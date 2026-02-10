@@ -1,0 +1,531 @@
+/* 全域樣式 */
+
+// ============================================
+// 響應式設計變數
+// ============================================
+$sidebar-width: 250px;
+$header-height: 60px;
+
+// Bootstrap 5 斷點
+$breakpoint-sm: 576px;   // 手機
+$breakpoint-md: 768px;   // 平板
+$breakpoint-lg: 992px;   // 桌面
+$breakpoint-xl: 1200px;  // 大螢幕
+$breakpoint-xxl: 1400px; // 超大螢幕
+
+// ============================================
+// 主要佈局樣式
+// ============================================
+.app-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex: 1;
+  margin-left: $sidebar-width;
+  padding-top: $header-height;
+  transition: margin-left 0.3s ease;
+  
+  // 平板及手機：側邊欄隱藏，內容區域全寬
+  @media (max-width: #{$breakpoint-lg - 0.02px}) {
+    margin-left: 0;
+  }
+}
+
+// ============================================
+// 響應式工具類別
+// ============================================
+
+// 桌面版顯示（>= 992px）
+.desktop-only {
+  @media (max-width: #{$breakpoint-lg - 0.02px}) {
+    display: none !important;
+  }
+}
+
+// 平板版顯示（768px - 991px）
+.tablet-only {
+  display: none !important;
+  
+  @media (min-width: $breakpoint-md) and (max-width: #{$breakpoint-lg - 0.02px}) {
+    display: block !important;
+  }
+}
+
+// 手機版顯示（< 768px）
+.mobile-only {
+  display: none !important;
+  
+  @media (max-width: #{$breakpoint-md - 0.02px}) {
+    display: block !important;
+  }
+}
+
+// 平板及手機顯示（< 992px）
+.tablet-mobile-only {
+  display: none !important;
+  
+  @media (max-width: #{$breakpoint-lg - 0.02px}) {
+    display: block !important;
+  }
+}
+
+// 桌面及平板顯示（>= 768px）
+.desktop-tablet-only {
+  @media (max-width: #{$breakpoint-md - 0.02px}) {
+    display: none !important;
+  }
+}
+
+// ============================================
+// 響應式間距
+// ============================================
+.responsive-padding {
+  padding: 1.5rem;
+  
+  @media (max-width: #{$breakpoint-lg - 0.02px}) {
+    padding: 1rem;
+  }
+  
+  @media (max-width: #{$breakpoint-md - 0.02px}) {
+    padding: 0.75rem;
+  }
+}
+
+.responsive-margin {
+  margin: 1.5rem;
+  
+  @media (max-width: #{$breakpoint-lg - 0.02px}) {
+    margin: 1rem;
+  }
+  
+  @media (max-width: #{$breakpoint-md - 0.02px}) {
+    margin: 0.75rem;
+  }
+}
+
+// ============================================
+// 響應式卡片
+// ============================================
+.responsive-card {
+  .card-body {
+    padding: 1.5rem;
+    
+    @media (max-width: #{$breakpoint-md - 0.02px}) {
+      padding: 1rem;
+    }
+  }
+}
+
+// ============================================
+// 響應式表格
+// ============================================
+.table-responsive-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  
+  @media (max-width: #{$breakpoint-md - 0.02px}) {
+    margin: 0 -0.75rem;
+    padding: 0 0.75rem;
+  }
+}
+
+// 手機版表格：隱藏次要欄位
+.table-mobile-hide {
+  @media (max-width: #{$breakpoint-md - 0.02px}) {
+    display: none !important;
+  }
+}
+
+// 平板版表格：隱藏次要欄位
+.table-tablet-hide {
+  @media (max-width: #{$breakpoint-lg - 0.02px}) {
+    display: none !important;
+  }
+}
+
+// ============================================
+// 響應式按鈕群組
+// ============================================
+.btn-group-responsive {
+  display: flex;
+  gap: 0.5rem;
+  
+  @media (max-width: #{$breakpoint-md - 0.02px}) {
+    flex-direction: column;
+    
+    .btn {
+      width: 100%;
+    }
+  }
+}
+
+// ============================================
+// 響應式表單
+// ============================================
+.form-responsive {
+  .row {
+    @media (max-width: #{$breakpoint-md - 0.02px}) {
+      > [class*="col-"] {
+        margin-bottom: 1rem;
+      }
+    }
+  }
+}
+
+// ============================================
+// 響應式頁面標題
+// ============================================
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+  
+  h1, h2, h3 {
+    margin-bottom: 0;
+  }
+  
+  @media (max-width: #{$breakpoint-md - 0.02px}) {
+    flex-direction: column;
+    align-items: stretch;
+    
+    .page-header-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      
+      .btn {
+        width: 100%;
+      }
+    }
+  }
+}
+
+// ============================================
+// 側邊滑入面板樣式
+// ============================================
+.slide-panel-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1040;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  
+  &.show {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+.slide-panel {
+  position: fixed;
+  top: 0;
+  right: -100%;
+  width: 100%;
+  max-width: 600px;
+  height: 100%;
+  background-color: #fff;
+  z-index: 1050;
+  transition: right 0.3s ease;
+  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  
+  &.show {
+    right: 0;
+  }
+  
+  &.slide-panel-sm {
+    max-width: 400px;
+  }
+  
+  &.slide-panel-lg {
+    max-width: 800px;
+  }
+  
+  &.slide-panel-xl {
+    max-width: 1000px;
+  }
+  
+  // 響應式面板寬度
+  @media (max-width: #{$breakpoint-lg - 0.02px}) {
+    max-width: 80%;
+    
+    &.slide-panel-lg,
+    &.slide-panel-xl {
+      max-width: 90%;
+    }
+  }
+  
+  @media (max-width: #{$breakpoint-md - 0.02px}) {
+    max-width: 100%;
+    
+    &.slide-panel-sm,
+    &.slide-panel-lg,
+    &.slide-panel-xl {
+      max-width: 100%;
+    }
+  }
+}
+
+.slide-panel-header {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #dee2e6;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+  
+  @media (max-width: #{$breakpoint-md - 0.02px}) {
+    padding: 0.75rem 1rem;
+  }
+}
+
+.slide-panel-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.5rem;
+  
+  @media (max-width: #{$breakpoint-md - 0.02px}) {
+    padding: 1rem;
+  }
+}
+
+.slide-panel-footer {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid #dee2e6;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  flex-shrink: 0;
+  
+  @media (max-width: #{$breakpoint-md - 0.02px}) {
+    padding: 0.75rem 1rem;
+    flex-direction: column;
+    
+    .btn {
+      width: 100%;
+    }
+  }
+}
+
+// ============================================
+// 表格樣式
+// ============================================
+.data-table {
+  .table {
+    margin-bottom: 0;
+  }
+  
+  .table-actions {
+    white-space: nowrap;
+  }
+  
+  // 響應式表格操作按鈕
+  @media (max-width: #{$breakpoint-md - 0.02px}) {
+    .table-actions {
+      .btn {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+      }
+      
+      .btn-text {
+        display: none;
+      }
+    }
+  }
+}
+
+// ============================================
+// 表單樣式
+// ============================================
+.form-required::after {
+  content: '*';
+  color: #dc3545;
+  margin-left: 4px;
+}
+
+// ============================================
+// 響應式搜尋列
+// ============================================
+.search-bar {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  
+  @media (max-width: #{$breakpoint-md - 0.02px}) {
+    flex-direction: column;
+    
+    .form-control,
+    .btn {
+      width: 100%;
+    }
+  }
+}
+
+// ============================================
+// 響應式分頁
+// ============================================
+.pagination-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1rem;
+  
+  @media (max-width: #{$breakpoint-md - 0.02px}) {
+    flex-direction: column;
+    align-items: stretch;
+    
+    .pagination {
+      justify-content: center;
+    }
+    
+    .pagination-info {
+      text-align: center;
+    }
+  }
+}
+
+// ============================================
+// 響應式空狀態
+// ============================================
+.empty-state {
+  text-align: center;
+  padding: 3rem 1.5rem;
+  
+  .empty-state-icon {
+    font-size: 4rem;
+    color: #6c757d;
+    margin-bottom: 1rem;
+  }
+  
+  @media (max-width: #{$breakpoint-md - 0.02px}) {
+    padding: 2rem 1rem;
+    
+    .empty-state-icon {
+      font-size: 3rem;
+    }
+  }
+}
+
+// ============================================
+// 響應式統計卡片
+// ============================================
+.stats-card {
+  .card-body {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .stats-icon {
+    font-size: 2.5rem;
+    opacity: 0.8;
+  }
+  
+  .stats-value {
+    font-size: 1.75rem;
+    font-weight: 600;
+    line-height: 1.2;
+  }
+  
+  .stats-label {
+    font-size: 0.875rem;
+    color: #6c757d;
+  }
+  
+  @media (max-width: #{$breakpoint-md - 0.02px}) {
+    .stats-icon {
+      font-size: 2rem;
+    }
+    
+    .stats-value {
+      font-size: 1.5rem;
+    }
+  }
+}
+
+// ============================================
+// 響應式導覽標籤
+// ============================================
+.nav-tabs-responsive {
+  @media (max-width: #{$breakpoint-md - 0.02px}) {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    
+    .nav-item {
+      flex-shrink: 0;
+    }
+    
+    .nav-link {
+      white-space: nowrap;
+    }
+  }
+}
+
+// ============================================
+// 響應式麵包屑
+// ============================================
+.breadcrumb-responsive {
+  @media (max-width: #{$breakpoint-md - 0.02px}) {
+    font-size: 0.875rem;
+    
+    .breadcrumb-item + .breadcrumb-item::before {
+      padding-right: 0.25rem;
+    }
+    
+    .breadcrumb-item + .breadcrumb-item {
+      padding-left: 0.25rem;
+    }
+  }
+}
+
+// ============================================
+// 防止 body 滾動（當側邊欄或面板開啟時）
+// ============================================
+body.sidebar-open,
+body.panel-open {
+  overflow: hidden;
+  
+  @media (min-width: $breakpoint-lg) {
+    overflow: auto;
+  }
+}
+
+// ============================================
+// 觸控裝置優化
+// ============================================
+@media (hover: none) and (pointer: coarse) {
+  // 增加觸控目標大小
+  .btn {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  .nav-link {
+    padding: 0.75rem 1rem;
+  }
+  
+  .dropdown-item {
+    padding: 0.75rem 1rem;
+  }
+  
+  // 移除 hover 效果
+  .btn:hover,
+  .nav-link:hover,
+  .dropdown-item:hover {
+    transition: none;
+  }
+}

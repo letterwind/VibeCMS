@@ -1,0 +1,128 @@
+<div class="container-fluid py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0"><i class="bi bi-gear-fill me-2"></i>網站設定</h2>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h5 class="mb-0">SEO 設定</h5>
+    </div>
+    <div class="card-body">
+      @if (loading) {
+        <div class="text-center py-5">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">載入中...</span>
+          </div>
+        </div>
+      } @else {
+        <form (ngSubmit)="save()">
+          <div class="mb-3">
+            <label for="metaTitle" class="form-label"
+              >網站標題 (Meta Title)</label
+            >
+            <input
+              type="text"
+              class="form-control"
+              id="metaTitle"
+              [(ngModel)]="settings.metaTitle"
+              name="metaTitle"
+              maxlength="100"
+              placeholder="輸入網站標題"
+            />
+            <div class="form-text">建議長度：50-60 字元</div>
+          </div>
+
+          <div class="mb-3">
+            <label for="metaDescription" class="form-label"
+              >網站描述 (Meta Description)</label
+            >
+            <textarea
+              class="form-control"
+              id="metaDescription"
+              [(ngModel)]="settings.metaDescription"
+              name="metaDescription"
+              rows="3"
+              maxlength="200"
+              placeholder="輸入網站描述"
+            ></textarea>
+            <div class="form-text">建議長度：150-160 字元</div>
+          </div>
+
+          <div class="mb-3">
+            <label for="metaKeywords" class="form-label"
+              >關鍵字 (Meta Keywords)</label
+            >
+            <input
+              type="text"
+              class="form-control"
+              id="metaKeywords"
+              [(ngModel)]="settings.metaKeywords"
+              name="metaKeywords"
+              maxlength="200"
+              placeholder="輸入關鍵字，以逗號分隔"
+            />
+            <div class="form-text">多個關鍵字請以逗號分隔</div>
+          </div>
+
+          <hr class="my-4" />
+
+          <h5 class="mb-3">Favicon 設定</h5>
+
+          <div class="mb-3">
+            <label class="form-label">目前 Favicon</label>
+            <div class="d-flex align-items-center gap-3">
+              @if (settings.faviconPath) {
+                <img
+                  [src]="getFaviconUrl()"
+                  alt="Favicon"
+                  class="border rounded"
+                  style="width: 32px; height: 32px; object-fit: contain"
+                />
+                <span class="text-muted small">{{ settings.faviconPath }}</span>
+              } @else {
+                <span class="text-muted">尚未設定 Favicon</span>
+              }
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <label for="favicon" class="form-label">上傳新 Favicon</label>
+            <input
+              type="file"
+              class="form-control"
+              id="favicon"
+              accept=".ico,.png,.jpg,.jpeg,.gif,.svg"
+              (change)="onFileSelected($event)"
+            />
+            <div class="form-text">
+              支援格式：ICO、PNG、JPG、GIF、SVG，檔案大小上限 1MB
+            </div>
+          </div>
+
+          <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary" [disabled]="saving">
+              @if (saving) {
+                <span
+                  class="spinner-border spinner-border-sm me-1"
+                  role="status"
+                ></span>
+              }
+              <i class="bi bi-check-lg me-1"></i>儲存設定
+            </button>
+          </div>
+        </form>
+      }
+    </div>
+  </div>
+
+  @if (message) {
+    <div
+      class="alert mt-3"
+      [class.alert-success]="!isError"
+      [class.alert-danger]="isError"
+      role="alert"
+    >
+      {{ message }}
+    </div>
+  }
+</div>

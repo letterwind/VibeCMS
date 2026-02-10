@@ -1,0 +1,7 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/WebCMS.Api/WebCMS.Api.csproj" />
+    <Project Path="src/WebCMS.Core/WebCMS.Core.csproj" />
+    <Project Path="src/WebCMS.Infrastructure/WebCMS.Infrastructure.csproj" />
+  </Folder>
+</Solution>
