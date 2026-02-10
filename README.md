@@ -155,6 +155,28 @@ docker-compose down -v
 3. 安裝 [SQL Server](https://www.microsoft.com/sql-server) 或 SQL Server Express
 4. 安裝 [Git](https://git-scm.com/) (用於版本控制)
 
+#### 快速啟動（推薦）
+
+使用啟動腳本一鍵啟動前後端：
+
+**Windows:**
+```powershell
+.\start-dev.ps1
+```
+
+**Linux/Mac:**
+```bash
+./start-dev.sh
+```
+
+腳本會自動：
+- 檢查開發環境
+- 啟動後端 API
+- 啟動前端應用程式
+- 顯示存取資訊
+
+#### 手動啟動
+
 ### 資料庫設定
 
 #### Docker 環境
