@@ -1,0 +1,68 @@
+version: "3.8"
+
+services:
+  # SQL Server 資料庫
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: vibecms-sqlserver
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=VibeCMS@2026
+      - MSSQL_PID=Express
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver-data:/var/opt/mssql
+    networks:
+      - vibecms-network
+    healthcheck:
+      test: /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P VibeCMS@2026 -Q "SELECT 1" || exit 1
+      interval: 10s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+
+  # ASP.NET Core WebAPI
+  api:
+    build:
+      context: .
+      dockerfile: src/WebCMS.Api/Dockerfile
+    container_name: vibecms-api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5000
+      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=VibeCMS;User Id=sa;Password=VibeCMS@2026;TrustServerCertificate=True;
+      - Jwt__Secret=VibeCMS-Super-Secret-Key-For-JWT-Token-Generation-2026
+      - Jwt__Issuer=VibeCMS
+      - Jwt__Audience=VibeCMS
+      - Jwt__ExpirationMinutes=60
+    ports:
+      - "5000:5000"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    networks:
+      - vibecms-network
+
+  # Angular 前端
+  web:
+    build:
+      context: .
+      dockerfile: src/WebCMS.Web/Dockerfile
+    container_name: vibecms-web
+    environment:
+      - API_URL=http://localhost:5000/api
+    ports:
+      - "4200:80"
+    depends_on:
+      - api
+    networks:
+      - vibecms-network
+
+volumes:
+  sqlserver-data:
+    driver: local
+
+networks:
+  vibecms-network:
+    driver: bridge

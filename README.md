@@ -60,15 +60,107 @@ VibeCMS/
 - 🎯 **權限控制** - 基於角色的存取控制（RBAC）
 - 🔌 **可擴充架構** - 模組化設計，預留電子商務擴充
 
+## 系統架構
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                     Angular 20 前端                          │
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐   │
+│  │ 登入頁面 │  │ 角色管理 │  │ 文章管理 │  │ 網站設定 │   │
+│  └──────────┘  └──────────┘  └──────────┘  └──────────┘   │
+│         │              │              │              │       │
+│         └──────────────┴──────────────┴──────────────┘       │
+│                          │                                   │
+│                    HTTP/HTTPS (JWT)                          │
+└──────────────────────────┼──────────────────────────────────┘
+                           │
+┌──────────────────────────┼──────────────────────────────────┐
+│                    ASP.NET Core 10 WebAPI                    │
+│  ┌──────────────────────────────────────────────────────┐   │
+│  │              Controllers (API 端點)                   │   │
+│  └──────────────────────────────────────────────────────┘   │
+│                          │                                   │
+│  ┌──────────────────────────────────────────────────────┐   │
+│  │         Business Services (業務邏輯層)               │   │
+│  │  • AuthService  • RoleService  • ArticleService      │   │
+│  └──────────────────────────────────────────────────────┘   │
+│                          │                                   │
+│  ┌──────────────────────────────────────────────────────┐   │
+│  │      Entity Framework Core (資料存取層)              │   │
+│  └──────────────────────────────────────────────────────┘   │
+└──────────────────────────┼──────────────────────────────────┘
+                           │
+┌──────────────────────────┼──────────────────────────────────┐
+│                     SQL Server 資料庫                        │
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐   │
+│  │ 使用者表 │  │ 角色表   │  │ 文章表   │  │ 設定表   │   │
+│  └──────────┘  └──────────┘  └──────────┘  └──────────┘   │
+└─────────────────────────────────────────────────────────────┘
+```
+
 ## 快速開始
 
-### 前置需求
+### 方式一：使用 Docker（推薦）
+
+最快速的啟動方式，無需安裝任何開發工具！
+
+#### 前置需求
+- 安裝 [Docker Desktop](https://www.docker.com/products/docker-desktop)
+
+#### 啟動步驟
+
+```bash
+# 1. Clone 專案
+git clone https://github.com/letterwind/VibeCMS.git
+cd VibeCMS
+
+# 2. 啟動所有服務（資料庫、後端、前端）
+docker-compose up -d
+
+# 3. 等待服務啟動（約 1-2 分鐘）
+# 前端: http://localhost:4200
+# 後端 API: http://localhost:5000
+# Swagger: http://localhost:5000/swagger
+```
+
+就這麼簡單！系統已經準備好使用了。
+
+#### Docker 常用指令
+
+```bash
+# 查看服務狀態
+docker-compose ps
+
+# 查看日誌
+docker-compose logs -f
+
+# 停止服務
+docker-compose down
+
+# 重新建置並啟動
+docker-compose up -d --build
+
+# 清除所有資料（包含資料庫）
+docker-compose down -v
+```
+
+### 方式二：本機開發環境
+
+適合需要進行開發和除錯的情況。
+
+#### 前置需求
 
 1. 安裝 [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0)
 2. 安裝 [Node.js](https://nodejs.org/) (18.x 或更高版本)
 3. 安裝 [SQL Server](https://www.microsoft.com/sql-server) 或 SQL Server Express
+4. 安裝 [Git](https://git-scm.com/) (用於版本控制)
 
 ### 資料庫設定
+
+#### Docker 環境
+資料庫已自動設定，無需手動操作。
+
+#### 本機環境
 
 1. 建立資料庫：
 ```sql
@@ -230,18 +322,180 @@ export const environment = {
 };
 ```
 
+## 故障排除
+
+### 常見問題
+
+#### 1. 資料庫連線失敗
+
+**問題**: `Cannot open database "VibeCMS" requested by the login`
+
+**解決方案**:
+- 確認 SQL Server 服務正在運行
+- 檢查 `appsettings.json` 中的連線字串是否正確
+- 確認資料庫已建立：`CREATE DATABASE VibeCMS;`
+- 執行遷移：`dotnet ef database update`
+
+#### 2. CORS 錯誤
+
+**問題**: `Access to XMLHttpRequest has been blocked by CORS policy`
+
+**解決方案**:
+- 確認後端 `Program.cs` 中已設定 CORS
+- 檢查前端 API URL 是否正確（預設：`https://localhost:5001/api`）
+- 確認後端和前端都在運行
+
+#### 3. JWT Token 過期
+
+**問題**: `401 Unauthorized` 錯誤
+
+**解決方案**:
+- 重新登入以取得新的 Token
+- 檢查 `Jwt__ExpirationMinutes` 設定
+- 確認系統時間正確
+
+#### 4. Angular 編譯錯誤
+
+**問題**: `Module not found` 或 TypeScript 錯誤
+
+**解決方案**:
+```bash
+cd src/WebCMS.Web
+rm -rf node_modules package-lock.json
+npm install
+npm start
+```
+
+#### 5. Entity Framework 遷移錯誤
+
+**問題**: `Build failed` 或遷移無法執行
+
+**解決方案**:
+```bash
+cd src/WebCMS.Api
+dotnet clean
+dotnet build
+dotnet ef database update
+```
+
+### 效能優化建議
+
+1. **資料庫索引**: 為常用查詢欄位建立索引
+2. **快取機制**: 使用 Redis 或 Memory Cache 快取常用資料
+3. **圖片優化**: 壓縮上傳的圖片檔案
+4. **CDN**: 使用 CDN 加速靜態資源載入
+5. **分頁查詢**: 大量資料使用分頁避免一次載入過多
+
+## 安全性建議
+
+### 生產環境檢查清單
+
+- [ ] 變更預設管理員密碼
+- [ ] 設定強密碼的 JWT Secret
+- [ ] 啟用 HTTPS
+- [ ] 設定適當的 CORS 政策
+- [ ] 定期更新套件版本
+- [ ] 實施 SQL Injection 防護（已內建於 EF Core）
+- [ ] 實施 XSS 防護（已內建於 Angular）
+- [ ] 設定適當的 Content Security Policy
+- [ ] 啟用 Rate Limiting 防止暴力破解
+- [ ] 定期備份資料庫
+
+## 專案規格文件
+
+完整的需求、設計和任務文件位於 `.kiro/specs/web-cms-management/` 目錄：
+
+- **requirements.md** - 12 個完整需求規格
+- **design.md** - 技術架構與設計文件
+- **tasks.md** - 17 個實作任務群組
+
+## 技術特色
+
+### 後端特色
+
+- **Clean Architecture**: 分層架構，關注點分離
+- **SOLID 原則**: 遵循物件導向設計原則
+- **依賴注入**: 使用內建 DI 容器
+- **Repository Pattern**: 資料存取層抽象化
+- **FluentValidation**: 強型別驗證規則
+- **Property-Based Testing**: 使用 FsCheck 進行屬性測試
+
+### 前端特色
+
+- **Standalone Components**: Angular 20 最新架構
+- **Reactive Forms**: 響應式表單驗證
+- **RxJS**: 響應式程式設計
+- **Bootstrap 5**: 現代化 UI 框架
+- **TinyMCE**: 專業級富文本編輯器
+- **JWT Authentication**: 安全的身份驗證機制
+
 ## 授權
 
 本專案採用 MIT 授權條款。
 
-## 貢獻
+## 版本歷史
 
-歡迎提交 Issue 或 Pull Request！
+### v1.0.0 (2026-02-10)
+- ✨ 初始版本發布
+- ✅ 完整的後台管理功能
+- ✅ 使用者認證與授權
+- ✅ 角色權限管理（RBAC）
+- ✅ 文章與分類管理
+- ✅ 響應式設計支援
+- ✅ 完整的測試覆蓋
+
+## 貢獻指南
+
+歡迎貢獻！請遵循以下步驟：
+
+1. Fork 本專案
+2. 建立功能分支 (`git checkout -b feature/AmazingFeature`)
+3. 提交變更 (`git commit -m 'Add some AmazingFeature'`)
+4. 推送到分支 (`git push origin feature/AmazingFeature`)
+5. 開啟 Pull Request
+
+### 程式碼規範
+
+- **C#**: 遵循 Microsoft C# Coding Conventions
+- **TypeScript**: 遵循 Angular Style Guide
+- **Commit 訊息**: 使用 Conventional Commits 格式
+
+## 路線圖
+
+### 未來計劃功能
+
+- [ ] 多語系支援（i18n）
+- [ ] 檔案管理系統
+- [ ] 圖片裁切與編輯
+- [ ] 文章版本控制
+- [ ] 評論系統
+- [ ] 電子商務模組
+- [ ] 會員系統
+- [ ] 電子報功能
+- [ ] SEO 分析工具
+- [ ] 網站流量統計
+
+## 相關資源
+
+- [ASP.NET Core 文件](https://docs.microsoft.com/aspnet/core)
+- [Angular 文件](https://angular.io/docs)
+- [Bootstrap 文件](https://getbootstrap.com/docs)
+- [Entity Framework Core 文件](https://docs.microsoft.com/ef/core)
+- [TinyMCE 文件](https://www.tiny.cloud/docs)
+
+## 致謝
+
+感謝所有開源專案的貢獻者，讓這個專案得以實現。
 
 ## 聯絡資訊
 
-如有任何問題或建議，請透過 GitHub Issues 聯繫我們。
+如有任何問題或建議，請透過以下方式聯繫：
+
+- **GitHub Issues**: [https://github.com/letterwind/VibeCMS/issues](https://github.com/letterwind/VibeCMS/issues)
+- **Email**: 透過 GitHub Profile 聯繫
 
 ---
 
 **VibeCMS** - 打造您的內容管理體驗 🚀
+
+Made with ❤️ using ASP.NET Core 10 & Angular 20
