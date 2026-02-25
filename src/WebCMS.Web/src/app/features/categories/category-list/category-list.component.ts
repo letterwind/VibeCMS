@@ -6,6 +6,7 @@ import { ConfirmDialogService } from '../../../shared/components/confirm-dialog/
 import { SlidePanelComponent } from '../../../shared/components/slide-panel/slide-panel.component';
 import { CategoryDto, CategoryTreeDto, QueryParameters } from '../../../core/models/category.model';
 import { CategoryFormComponent } from '../category-form/category-form.component';
+import { TranslatePipe } from '../../../core/pipes/translate.pipe';
 
 @Component({
   selector: 'app-category-list',
@@ -14,7 +15,8 @@ import { CategoryFormComponent } from '../category-form/category-form.component'
     CommonModule,
     FormsModule,
     SlidePanelComponent,
-    CategoryFormComponent
+    CategoryFormComponent,
+    TranslatePipe
   ],
   templateUrl: './category-list.component.html',
   styleUrl: './category-list.component.scss'

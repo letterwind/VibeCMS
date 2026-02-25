@@ -3,7 +3,9 @@
 >
   <div class="card shadow" style="width: 400px">
     <div class="card-body p-4">
-      <h4 class="card-title text-center mb-4">WebCMS 管理系統</h4>
+      <h4 class="card-title text-center mb-4">
+        {{ "login.title" | translate }}
+      </h4>
 
       @if (errorMessage()) {
         <div class="alert alert-danger" role="alert">
@@ -14,45 +16,48 @@
       <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
         <div class="mb-3">
           <label for="account" class="form-label"
-            >帳號 <span class="text-danger">*</span></label
+            >{{ "login.account" | translate }}
+            <span class="text-danger">*</span></label
           >
           <input
             type="text"
             class="form-control"
             id="account"
             formControlName="account"
-            placeholder="請輸入帳號"
+            placeholder="{{ 'login.accountPlaceholder' | translate }}"
             [class.is-invalid]="isFieldInvalid('account')"
           />
           <app-validation-error
             [control]="loginForm.get('account')"
-            [fieldName]="'帳號'"
+            [fieldName]="'login.account' | translate"
           >
           </app-validation-error>
         </div>
 
         <div class="mb-3">
           <label for="password" class="form-label"
-            >密碼 <span class="text-danger">*</span></label
+            >{{ "login.password" | translate }}
+            <span class="text-danger">*</span></label
           >
           <input
             type="password"
             class="form-control"
             id="password"
             formControlName="password"
-            placeholder="請輸入密碼"
+            placeholder="{{ 'login.passwordPlaceholder' | translate }}"
             [class.is-invalid]="isFieldInvalid('password')"
           />
           <app-validation-error
             [control]="loginForm.get('password')"
-            [fieldName]="'密碼'"
+            [fieldName]="'login.password' | translate"
           >
           </app-validation-error>
         </div>
 
         <div class="mb-3">
           <label for="captcha" class="form-label"
-            >驗證碼 <span class="text-danger">*</span></label
+            >{{ "login.captcha" | translate }}
+            <span class="text-danger">*</span></label
           >
           <div class="input-group">
             <input
@@ -60,29 +65,29 @@
               class="form-control"
               id="captcha"
               formControlName="captcha"
-              placeholder="請輸入驗證碼"
+              placeholder="{{ 'login.captchaPlaceholder' | translate }}"
               [class.is-invalid]="isFieldInvalid('captcha')"
             />
             <span
               class="input-group-text p-0"
               style="cursor: pointer"
               (click)="refreshCaptcha()"
-              title="點擊重新整理驗證碼"
+              [title]="'login.refreshCaptcha' | translate"
             >
               @if (captchaImage()) {
                 <img
                   [src]="'data:image/png;base64,' + captchaImage()"
-                  alt="驗證碼"
+                  [alt]="'login.captcha' | translate"
                   style="height: 38px"
                 />
               } @else {
-                <span class="px-3">載入中...</span>
+                <span class="px-3">{{ "common.loading" | translate }}</span>
               }
             </span>
           </div>
           <app-validation-error
             [control]="loginForm.get('captcha')"
-            [fieldName]="'驗證碼'"
+            [fieldName]="'login.captcha' | translate"
           >
           </app-validation-error>
         </div>
@@ -98,7 +103,7 @@
               role="status"
             ></span>
           }
-          登入
+          {{ "login.submit" | translate }}
         </button>
       </form>
     </div>

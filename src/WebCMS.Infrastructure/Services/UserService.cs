@@ -251,6 +251,7 @@ public class UserService : IUserService
                 ur.Role.Id,
                 ur.Role.Name,
                 ur.Role.Description,
+                ur.Role.LanguageCode,
                 ur.Role.HierarchyLevel,
                 ur.Role.CreatedAt,
                 ur.Role.UpdatedAt))

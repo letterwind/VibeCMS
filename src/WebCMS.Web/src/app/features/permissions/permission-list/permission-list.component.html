@@ -1,6 +1,9 @@
 <div class="container-fluid py-4">
   <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="mb-0"><i class="bi bi-shield-lock-fill me-2"></i>權限管理</h2>
+    <h2 class="mb-0">
+      <i class="bi bi-shield-lock-fill me-2"></i
+      >{{ "permission.permissionManagement" | translate }}
+    </h2>
   </div>
 
   <!-- Role Selection -->
@@ -8,7 +11,9 @@
     <div class="card-body">
       <div class="row g-3 align-items-center">
         <div class="col-auto">
-          <label class="col-form-label fw-bold">選擇角色：</label>
+          <label class="col-form-label fw-bold"
+            >{{ "permission.selectRole" | translate }}：</label
+          >
         </div>
         <div class="col-md-4">
           <select
@@ -16,9 +21,12 @@
             [(ngModel)]="selectedRoleId"
             (change)="onRoleChange()"
           >
-            <option [ngValue]="null">-- 請選擇角色 --</option>
+            <option [ngValue]="null">
+              {{ "permission.pleaseSelectRole" | translate }}
+            </option>
             <option *ngFor="let role of roles" [ngValue]="role.id">
-              {{ role.name }} (等級: {{ role.hierarchyLevel }})
+              {{ role.name }} ({{ "permission.level" | translate }}:
+              {{ role.hierarchyLevel }})
             </option>
           </select>
         </div>
@@ -29,14 +37,21 @@
   <!-- Permission Matrix -->
   <div class="card" *ngIf="selectedRoleId">
     <div class="card-header d-flex justify-content-between align-items-center">
-      <span> <i class="bi bi-table me-2"></i>權限設定矩陣 </span>
+      <span>
+        <i class="bi bi-table me-2"></i
+        >{{ "permission.permissionMatrix" | translate }}
+      </span>
       <button
         class="btn btn-primary btn-sm"
         (click)="savePermissions()"
         [disabled]="saving"
       >
         <i class="bi bi-save me-1"></i>
-        {{ saving ? "儲存中..." : "儲存變更" }}
+        {{
+          saving
+            ? ("permission.saving" | translate)
+            : ("permission.saveChanges" | translate)
+        }}
       </button>
     </div>
     <div class="card-body">
@@ -44,32 +59,36 @@
         <table class="table table-bordered table-hover mb-0">
           <thead class="table-light">
             <tr>
-              <th style="min-width: 250px">功能名稱</th>
+              <th style="min-width: 250px">
+                {{ "function.name" | translate }}
+              </th>
               <th class="text-center" style="width: 100px">
                 <div class="d-flex flex-column align-items-center">
-                  <span>新增</span>
+                  <span>{{ "permission.create" | translate }}</span>
                   <small class="text-muted">(Create)</small>
                 </div>
               </th>
               <th class="text-center" style="width: 100px">
                 <div class="d-flex flex-column align-items-center">
-                  <span>讀取</span>
+                  <span>{{ "permission.read" | translate }}</span>
                   <small class="text-muted">(Read)</small>
                 </div>
               </th>
               <th class="text-center" style="width: 100px">
                 <div class="d-flex flex-column align-items-center">
-                  <span>更新</span>
+                  <span>{{ "permission.update" | translate }}</span>
                   <small class="text-muted">(Update)</small>
                 </div>
               </th>
               <th class="text-center" style="width: 100px">
                 <div class="d-flex flex-column align-items-center">
-                  <span>刪除</span>
+                  <span>{{ "permission.delete" | translate }}</span>
                   <small class="text-muted">(Delete)</small>
                 </div>
               </th>
-              <th class="text-center" style="width: 80px">全選</th>
+              <th class="text-center" style="width: 80px">
+                {{ "permission.selectAll" | translate }}
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -148,7 +167,7 @@
         class="text-center text-muted py-4"
       >
         <i class="bi bi-inbox fs-1 d-block mb-2"></i>
-        尚無功能項目
+        {{ "permission.noFunctions" | translate }}
       </div>
     </div>
   </div>
@@ -157,7 +176,7 @@
   <div class="card" *ngIf="!selectedRoleId">
     <div class="card-body text-center text-muted py-5">
       <i class="bi bi-arrow-up-circle fs-1 d-block mb-3"></i>
-      <p class="mb-0">請先選擇一個角色以設定權限</p>
+      <p class="mb-0">{{ "permission.pleaseSelectRoleFirst" | translate }}</p>
     </div>
   </div>
 

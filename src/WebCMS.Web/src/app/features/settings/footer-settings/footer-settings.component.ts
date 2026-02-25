@@ -4,11 +4,13 @@ import { FormsModule } from '@angular/forms';
 import { SettingsService } from '../../../core/services/settings.service';
 import { HtmlSettingsDto, UpdateHtmlSettingsRequest } from '../../../core/models/settings.model';
 import { EditorComponent } from '@tinymce/tinymce-angular';
+import { TranslatePipe } from '../../../core/pipes/translate.pipe';
+import { LanguageService } from '../../../core/services/language.service';
 
 @Component({
   selector: 'app-footer-settings',
   standalone: true,
-  imports: [CommonModule, FormsModule, EditorComponent],
+  imports: [CommonModule, FormsModule, EditorComponent, TranslatePipe],
   templateUrl: './footer-settings.component.html',
   styleUrl: './footer-settings.component.scss'
 })
@@ -39,7 +41,10 @@ export class FooterSettingsComponent implements OnInit {
     content_style: 'body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; font-size: 14px; }'
   };
 
-  constructor(private settingsService: SettingsService) {}
+  constructor(
+    private settingsService: SettingsService,
+    private languageService: LanguageService
+  ) {}
 
   ngOnInit(): void {
     this.loadSettings();
@@ -55,7 +60,7 @@ export class FooterSettingsComponent implements OnInit {
       },
       error: (err) => {
         console.error('Failed to load footer settings:', err);
-        this.showMessage('載入設定失敗', true);
+        this.showMessage(this.languageService.getTranslation('footerSettings.loadFailed'), true);
         this.loading = false;
       }
     });
@@ -73,12 +78,12 @@ export class FooterSettingsComponent implements OnInit {
       next: (result) => {
         this.settings = result;
         this.editorContent = result.htmlContent || '';
-        this.showMessage('設定已儲存', false);
+        this.showMessage(this.languageService.getTranslation('footerSettings.saveSuccess'), false);
         this.saving = false;
       },
       error: (err) => {
         console.error('Failed to save footer settings:', err);
-        this.showMessage('儲存設定失敗', true);
+        this.showMessage(this.languageService.getTranslation('footerSettings.saveFailed'), true);
         this.saving = false;
       }
     });

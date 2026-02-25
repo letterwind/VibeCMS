@@ -1,32 +1,39 @@
 <div class="container-fluid py-4">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h2 class="mb-0">
-      <i class="bi bi-layout-text-window-reverse me-2"></i>頁首設定
+      <i class="bi bi-layout-text-window-reverse me-2"></i
+      >{{ "headerSettings.title" | translate }}
     </h2>
   </div>
 
   <div class="card">
     <div class="card-header">
-      <h5 class="mb-0">全域頁首 HTML</h5>
+      <h5 class="mb-0">{{ "headerSettings.globalHeader" | translate }}</h5>
     </div>
     <div class="card-body">
       @if (loading) {
         <div class="text-center py-5">
           <div class="spinner-border text-primary" role="status">
-            <span class="visually-hidden">載入中...</span>
+            <span class="visually-hidden">{{
+              "common.loading" | translate
+            }}</span>
           </div>
         </div>
       } @else {
         <form (ngSubmit)="save()">
           <div class="mb-3">
-            <label class="form-label">頁首內容</label>
+            <label class="form-label">{{
+              "headerSettings.content" | translate
+            }}</label>
             <editor
               [init]="editorInit"
               licenseKey="gpl"
               [(ngModel)]="editorContent"
               name="htmlContent"
             />
-            <div class="form-text">此內容將顯示在所有頁面的頁首區域</div>
+            <div class="form-text">
+              {{ "headerSettings.contentHint" | translate }}
+            </div>
           </div>
 
           <div class="d-flex gap-2">
@@ -37,7 +44,8 @@
                   role="status"
                 ></span>
               }
-              <i class="bi bi-check-lg me-1"></i>儲存設定
+              <i class="bi bi-check-lg me-1"></i
+              >{{ "headerSettings.saveSettings" | translate }}
             </button>
           </div>
         </form>

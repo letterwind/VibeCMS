@@ -52,6 +52,10 @@ namespace WebCMS.Api.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
+                    b.Property<string>("LanguageCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime?>("LockoutEnd")
                         .HasColumnType("datetime2");
 
@@ -101,6 +105,13 @@ namespace WebCMS.Api.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
+                    b.Property<string>("LanguageCode")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)")
+                        .HasDefaultValue("zh-TW");
+
                     b.Property<string>("MetaDescription")
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
@@ -135,10 +146,10 @@ namespace WebCMS.Api.Migrations
 
                     b.HasIndex("CreatedBy");
 
-                    b.HasIndex("Slug")
-                        .IsUnique();
-
                     b.HasIndex("UpdatedBy");
+
+                    b.HasIndex("Slug", "LanguageCode")
+                        .IsUnique();
 
                     b.ToTable("Articles");
                 });
@@ -174,6 +185,13 @@ namespace WebCMS.Api.Migrations
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
+
+                    b.Property<string>("LanguageCode")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)")
+                        .HasDefaultValue("zh-TW");
 
                     b.Property<int>("Level")
                         .HasColumnType("int");
@@ -213,7 +231,7 @@ namespace WebCMS.Api.Migrations
 
                     b.HasIndex("ParentId");
 
-                    b.HasIndex("Slug")
+                    b.HasIndex("Slug", "LanguageCode")
                         .IsUnique();
 
                     b.ToTable("Categories");
@@ -227,13 +245,26 @@ namespace WebCMS.Api.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("HtmlContent")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LanguageCode")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)")
+                        .HasDefaultValue("zh-TW");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("LanguageCode")
+                        .IsUnique();
 
                     b.ToTable("FooterSettings");
                 });
@@ -263,6 +294,13 @@ namespace WebCMS.Api.Migrations
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
+
+                    b.Property<string>("LanguageCode")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)")
+                        .HasDefaultValue("zh-TW");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -303,15 +341,161 @@ namespace WebCMS.Api.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("HtmlContent")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LanguageCode")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)")
+                        .HasDefaultValue("zh-TW");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("LanguageCode")
+                        .IsUnique();
+
                     b.ToTable("HeaderSettings");
+                });
+
+            modelBuilder.Entity("WebCMS.Core.Entities.Language", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("LanguageCode")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<string>("LanguageName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LanguageCode")
+                        .IsUnique();
+
+                    b.ToTable("Languages");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(2026, 2, 11, 0, 0, 0, 0, DateTimeKind.Utc),
+                            IsActive = true,
+                            LanguageCode = "zh-TW",
+                            LanguageName = "繁體中文",
+                            SortOrder = 1,
+                            UpdatedAt = new DateTime(2026, 2, 11, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedAt = new DateTime(2026, 2, 11, 0, 0, 0, 0, DateTimeKind.Utc),
+                            IsActive = true,
+                            LanguageCode = "en-US",
+                            LanguageName = "English",
+                            SortOrder = 2,
+                            UpdatedAt = new DateTime(2026, 2, 11, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CreatedAt = new DateTime(2026, 2, 11, 0, 0, 0, 0, DateTimeKind.Utc),
+                            IsActive = true,
+                            LanguageCode = "ja-JP",
+                            LanguageName = "日本語",
+                            SortOrder = 3,
+                            UpdatedAt = new DateTime(2026, 2, 11, 0, 0, 0, 0, DateTimeKind.Utc)
+                        });
+                });
+
+            modelBuilder.Entity("WebCMS.Core.Entities.LanguageResource", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("LanguageCode")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)")
+                        .HasDefaultValue("zh-TW");
+
+                    b.Property<string>("ResourceKey")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("ResourceType")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
+                        .HasDefaultValue("Label");
+
+                    b.Property<string>("ResourceValue")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LanguageCode", "ResourceKey", "IsDeleted")
+                        .IsUnique();
+
+                    b.ToTable("LanguageResources");
                 });
 
             modelBuilder.Entity("WebCMS.Core.Entities.LoginAttempt", b =>
@@ -370,6 +554,13 @@ namespace WebCMS.Api.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
+                    b.Property<string>("LanguageCode")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)")
+                        .HasDefaultValue("zh-TW");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -380,7 +571,7 @@ namespace WebCMS.Api.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Name")
+                    b.HasIndex("Name", "LanguageCode")
                         .IsUnique();
 
                     b.ToTable("Roles");
@@ -394,6 +585,12 @@ namespace WebCMS.Api.Migrations
                     b.Property<int>("FunctionId")
                         .HasColumnType("int");
 
+                    b.Property<string>("LanguageCode")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)")
+                        .HasDefaultValue("zh-TW");
+
                     b.Property<bool>("CanCreate")
                         .HasColumnType("bit");
 
@@ -406,9 +603,18 @@ namespace WebCMS.Api.Migrations
                     b.Property<bool>("CanUpdate")
                         .HasColumnType("bit");
 
-                    b.HasKey("RoleId", "FunctionId");
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("RoleId", "FunctionId", "LanguageCode");
 
                     b.HasIndex("FunctionId");
+
+                    b.HasIndex("RoleId", "FunctionId", "LanguageCode")
+                        .IsUnique();
 
                     b.ToTable("RolePermissions");
                 });
@@ -421,9 +627,19 @@ namespace WebCMS.Api.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("FaviconPath")
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("LanguageCode")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)")
+                        .HasDefaultValue("zh-TW");
 
                     b.Property<string>("MetaDescription")
                         .HasMaxLength(200)
@@ -441,6 +657,9 @@ namespace WebCMS.Api.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("LanguageCode")
+                        .IsUnique();
 
                     b.ToTable("SiteSettings");
                 });

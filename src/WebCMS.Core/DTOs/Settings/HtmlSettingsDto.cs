@@ -5,6 +5,8 @@ namespace WebCMS.Core.DTOs.Settings;
 /// </summary>
 public record HtmlSettingsDto(
     int Id,
+    string LanguageCode,
     string? HtmlContent,
+    DateTime CreatedAt,
     DateTime UpdatedAt
 );

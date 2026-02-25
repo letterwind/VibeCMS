@@ -20,6 +20,9 @@ public record UpdateArticleRequest(
     [Required(ErrorMessage = "分類為必填欄位")]
     int CategoryId,
 
+    [MaxLength(10, ErrorMessage = "語言代碼最多 10 字元")]
+    string? LanguageCode,
+
     List<string>? Tags,
 
     [MaxLength(100, ErrorMessage = "SEO 標題最多 100 字元")]

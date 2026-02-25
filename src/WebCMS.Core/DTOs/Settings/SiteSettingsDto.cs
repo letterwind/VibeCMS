@@ -5,10 +5,12 @@ namespace WebCMS.Core.DTOs.Settings;
 /// </summary>
 public record SiteSettingsDto(
     int Id,
+    string LanguageCode,
     string? MetaTitle,
     string? MetaDescription,
     string? MetaKeywords,
     string? FaviconPath,
     string? FaviconUrl,
+    DateTime CreatedAt,
     DateTime UpdatedAt
 );

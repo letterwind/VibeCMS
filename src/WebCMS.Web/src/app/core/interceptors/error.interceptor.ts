@@ -21,16 +21,18 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
       // 不處理登入請求的錯誤，讓登入頁面自行處理
-      const isLoginRequest = req.url.includes('/auth/login');
-      
+      const isLoginRequest = req.url.includes('/login');
       switch (error.status) {
         case 401:
           // 未授權 - 清除認證並導向登入頁
           // 需求 1.6: 不透露具體錯誤原因
-          authService.clearAuth();
           if (!isLoginRequest) {
+            authService.clearAuth();
             notificationService.error('登入已過期，請重新登入');
-            router.navigate(['/login']);
+            // 使用 setTimeout 確保在當前執行堆疊完成後再導航
+            setTimeout(() => {
+              router.navigate(['/login']);
+            }, 0);
           }
           break;
 

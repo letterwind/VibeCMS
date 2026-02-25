@@ -1,21 +1,27 @@
-export interface ArticleDto {
-  id: number;
+export interface ArticleDto
+{
+  id: string | number;
   title: string;
   content: string;
   slug: string;
-  categoryId: number;
-  categoryName: string | null;
-  tags: string[];
-  metaTitle: string | null;
-  metaDescription: string | null;
-  metaKeywords: string | null;
+  categoryId: string | number;
+  categoryName?: string | null;
+  tags?: string[];
+  summary?: string;
+  metaTitle?: string | null;
+  metaDescription?: string | null;
+  metaKeywords?: string | null;
+  published?: boolean;
+  languageCode: string;
+  availableLanguages: Record<string, boolean>;
   createdAt: Date;
   updatedAt: Date;
-  createdBy: number | null;
-  createdByName: string | null;
+  createdBy?: number | null;
+  createdByName?: string | null;
 }
 
-export interface CreateArticleRequest {
+export interface CreateArticleRequest
+{
   title: string;
   content: string;
   slug: string;
@@ -26,7 +32,8 @@ export interface CreateArticleRequest {
   metaKeywords: string | null;
 }
 
-export interface UpdateArticleRequest {
+export interface UpdateArticleRequest
+{
   title: string;
   content: string;
   slug: string;
@@ -37,7 +44,8 @@ export interface UpdateArticleRequest {
   metaKeywords: string | null;
 }
 
-export interface PagedResult<T> {
+export interface PagedResult<T>
+{
   items: T[];
   totalCount: number;
   pageNumber: number;
@@ -45,7 +53,8 @@ export interface PagedResult<T> {
   totalPages: number;
 }
 
-export interface QueryParameters {
+export interface QueryParameters
+{
   pageNumber?: number;
   pageSize?: number;
   sortBy?: string;

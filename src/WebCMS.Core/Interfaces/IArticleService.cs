@@ -11,12 +11,12 @@ public interface IArticleService
     /// <summary>
     /// 取得文章列表（分頁）
     /// </summary>
-    Task<PagedResult<ArticleDto>> GetArticlesAsync(QueryParameters query, int? categoryId = null);
+    Task<PagedResult<ArticleDto>> GetArticlesAsync(QueryParameters query, int? categoryId = null, string? languageCode = null);
 
     /// <summary>
     /// 取得單一文章
     /// </summary>
-    Task<ArticleDto?> GetArticleByIdAsync(int id);
+    Task<ArticleDto?> GetArticleByIdAsync(int id, string? languageCode = null);
 
     /// <summary>
     /// 建立文章

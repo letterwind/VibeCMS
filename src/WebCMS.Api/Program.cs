@@ -15,6 +15,9 @@ using WebCMS.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Configure the HTTP request pipeline.
+builder.Services.AddHttpContextAccessor();
+
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
@@ -71,6 +74,10 @@ builder.Services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler
 builder.Services.AddScoped<IAuthorizationHandler, SuperAdminAuthorizationHandler>();
 
 // Register Services
+builder.Services.AddScoped<ILanguageService, LanguageService>();
+builder.Services.AddScoped(typeof(ITranslationService<>), typeof(TranslationService<>));
+builder.Services.AddScoped<ILanguageResourceService, LanguageResourceService>();
+builder.Services.AddScoped<ILanguageFileService, LanguageFileService>();
 builder.Services.AddScoped<ICaptchaService, CaptchaService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
@@ -87,9 +94,11 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.AllowAnyOrigin()
+        policy.WithOrigins("http://localhost:4200") // Angular 開發伺服器
               .AllowAnyMethod()
-              .AllowAnyHeader();
+              .AllowAnyHeader()
+              .AllowCredentials()
+              .WithExposedHeaders("*"); // 暴露所有標頭，讓前端能讀取錯誤資訊
     });
 });
 
@@ -111,6 +120,9 @@ using (var scope = app.Services.CreateScope())
 // 使用全域例外處理中介軟體（必須在其他中介軟體之前）
 app.UseGlobalExceptionHandler();
 
+// CORS 必須在 Authentication 和 Authorization 之前
+app.UseCors();
+
 // 啟用靜態檔案服務（用於 favicon 等上傳檔案）
 app.UseStaticFiles();
 
@@ -118,7 +130,5 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
-
-app.UseCors();
 
 app.Run();

@@ -168,6 +168,7 @@ public class RoleService : IRoleService
             role.Id,
             role.Name,
             role.Description,
+            role.LanguageCode,
             role.HierarchyLevel,
             role.CreatedAt,
             role.UpdatedAt);

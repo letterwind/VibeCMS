@@ -4,11 +4,13 @@ import { FormsModule } from '@angular/forms';
 import { SettingsService } from '../../../core/services/settings.service';
 import { SiteSettingsDto, UpdateSiteSettingsRequest } from '../../../core/models/settings.model';
 import { environment } from '../../../../environments/environment';
+import { TranslatePipe } from '../../../core/pipes/translate.pipe';
+import { LanguageService } from '../../../core/services/language.service';
 
 @Component({
   selector: 'app-site-settings',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TranslatePipe],
   templateUrl: './site-settings.component.html',
   styleUrl: './site-settings.component.scss'
 })
@@ -29,7 +31,10 @@ export class SiteSettingsComponent implements OnInit {
   isError = false;
   selectedFile: File | null = null;
 
-  constructor(private settingsService: SettingsService) {}
+  constructor(
+    private settingsService: SettingsService,
+    private languageService: LanguageService
+  ) {}
 
   ngOnInit(): void {
     this.loadSettings();
@@ -54,7 +59,7 @@ export class SiteSettingsComponent implements OnInit {
       },
       error: (err) => {
         console.error('Failed to load site settings:', err);
-        this.showMessage('載入設定失敗', true);
+        this.showMessage(this.languageService.getTranslation('siteSettings.loadFailed'), true);
         this.loading = false;
       }
     });
@@ -81,7 +86,7 @@ export class SiteSettingsComponent implements OnInit {
         },
         error: (err) => {
           console.error('Failed to upload favicon:', err);
-          this.showMessage('上傳 Favicon 失敗', true);
+          this.showMessage(this.languageService.getTranslation('siteSettings.uploadFailed'), true);
           this.saving = false;
         }
       });
@@ -100,12 +105,12 @@ export class SiteSettingsComponent implements OnInit {
     this.settingsService.updateSiteSettings(request).subscribe({
       next: (result) => {
         this.settings = result;
-        this.showMessage('設定已儲存', false);
+        this.showMessage(this.languageService.getTranslation('siteSettings.saveSuccess'), false);
         this.saving = false;
       },
       error: (err) => {
         console.error('Failed to save site settings:', err);
-        this.showMessage('儲存設定失敗', true);
+        this.showMessage(this.languageService.getTranslation('siteSettings.saveFailed'), true);
         this.saving = false;
       }
     });

@@ -4,11 +4,12 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { ValidationErrorComponent } from '../../../shared/components/validation-error/validation-error.component';
+import { TranslatePipe } from '../../../core/pipes/translate.pipe';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, ValidationErrorComponent],
+  imports: [CommonModule, ReactiveFormsModule, ValidationErrorComponent, TranslatePipe],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })

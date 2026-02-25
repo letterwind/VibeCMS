@@ -368,6 +368,7 @@ public class CategoryService : ICategoryService
             category.Id,
             category.Name,
             category.Slug,
+            category.LanguageCode,
             category.ParentId,
             category.Level,
             category.MetaTitle,

@@ -2,6 +2,8 @@ import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChange
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { FunctionService } from '../../../core/services/function.service';
+import { LanguageService } from '../../../core/services/language.service';
+import { TranslatePipe } from '../../../core/pipes/translate.pipe';
 import { FunctionDto, CreateFunctionRequest, UpdateFunctionRequest } from '../../../core/models/function.model';
 import { ValidationErrorComponent } from '../../../shared/components/validation-error/validation-error.component';
 
@@ -43,7 +45,7 @@ interface FlattenedOption {
 @Component({
   selector: 'app-function-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, ValidationErrorComponent],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, ValidationErrorComponent, TranslatePipe],
   templateUrl: './function-form.component.html',
   styleUrl: './function-form.component.scss'
 })
@@ -62,7 +64,8 @@ export class FunctionFormComponent implements OnInit, OnChanges {
 
   constructor(
     private fb: FormBuilder,
-    private functionService: FunctionService
+    private functionService: FunctionService,
+    public languageService: LanguageService
   ) {}
 
   get flattenedParentOptions(): FlattenedOption[] {

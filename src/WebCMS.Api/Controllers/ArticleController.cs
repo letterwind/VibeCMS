@@ -4,6 +4,7 @@ using WebCMS.Api.Authorization;
 using WebCMS.Core.DTOs.Article;
 using WebCMS.Core.DTOs.Common;
 using WebCMS.Core.Interfaces;
+using WebCMS.Infrastructure.Extensions;
 
 namespace WebCMS.Api.Controllers;
 
@@ -16,21 +17,28 @@ namespace WebCMS.Api.Controllers;
 public class ArticleController : ControllerBase
 {
     private readonly IArticleService _articleService;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public ArticleController(IArticleService articleService)
+    public ArticleController(IArticleService articleService, IHttpContextAccessor httpContextAccessor)
     {
         _articleService = articleService;
+        _httpContextAccessor = httpContextAccessor;
     }
 
     /// <summary>
     /// 取得文章列表（分頁）
     /// </summary>
     [HttpGet]
+    [AllowAnonymous]
     public async Task<ActionResult<PagedResult<ArticleDto>>> GetArticles(
         [FromQuery] QueryParameters query,
-        [FromQuery] int? categoryId = null)
+        [FromQuery] int? categoryId = null,
+        [FromQuery] string? lang = null)
     {
-        var result = await _articleService.GetArticlesAsync(query, categoryId);
+        // 取得語言代碼（優先級：查詢參數 > Header > Default）
+        var languageCode = lang ?? _httpContextAccessor.GetLanguageCodeFromContext();
+        
+        var result = await _articleService.GetArticlesAsync(query, categoryId, languageCode);
         return Ok(result);
     }
 
@@ -38,9 +46,12 @@ public class ArticleController : ControllerBase
     /// 取得單一文章
     /// </summary>
     [HttpGet("{id}")]
-    public async Task<ActionResult<ArticleDto>> GetArticle(int id)
+    [AllowAnonymous]
+    public async Task<ActionResult<ArticleDto>> GetArticle(int id, [FromQuery] string? lang = null)
     {
-        var article = await _articleService.GetArticleByIdAsync(id);
+        var languageCode = lang ?? _httpContextAccessor.GetLanguageCodeFromContext();
+        
+        var article = await _articleService.GetArticleByIdAsync(id, languageCode);
         if (article == null)
         {
             return NotFound(new { message = "找不到指定的文章" });

@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FunctionService } from '../../../core/services/function.service';
 import { ConfirmDialogService } from '../../../shared/components/confirm-dialog/confirm-dialog.service';
+import { TranslatePipe } from '../../../core/pipes/translate.pipe';
+import { LanguageService } from '../../../core/services/language.service';
 import { SlidePanelComponent } from '../../../shared/components/slide-panel/slide-panel.component';
 import { FunctionDto } from '../../../core/models/function.model';
 import { FunctionFormComponent } from '../function-form/function-form.component';
@@ -14,7 +16,8 @@ import { FunctionFormComponent } from '../function-form/function-form.component'
     CommonModule,
     FormsModule,
     SlidePanelComponent,
-    FunctionFormComponent
+    FunctionFormComponent,
+    TranslatePipe
   ],
   templateUrl: './function-list.component.html',
   styleUrl: './function-list.component.scss'
@@ -32,7 +35,8 @@ export class FunctionListComponent implements OnInit {
 
   constructor(
     private functionService: FunctionService,
-    private confirmDialog: ConfirmDialogService
+    private confirmDialog: ConfirmDialogService,
+    private languageService: LanguageService
   ) {}
 
   ngOnInit(): void {
@@ -184,10 +188,10 @@ export class FunctionListComponent implements OnInit {
 
   deleteFunction(func: FunctionDto): void {
     this.confirmDialog.confirm({
-      title: '刪除功能',
-      message: `確定要刪除功能「${func.name}」嗎？此操作將執行軟刪除。`,
-      confirmText: '刪除',
-      cancelText: '取消',
+      title: this.languageService.getTranslation('function.deleteFunction'),
+      message: this.languageService.getTranslation('function.deleteFunctionConfirm').replace('{0}', func.name),
+      confirmText: this.languageService.getTranslation('common.delete'),
+      cancelText: this.languageService.getTranslation('common.cancel'),
       type: 'danger'
     }).subscribe(confirmed => {
       if (confirmed) {

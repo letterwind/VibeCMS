@@ -1,7 +1,8 @@
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
   <div class="mb-3">
     <label for="name" class="form-label"
-      >功能名稱 <span class="text-danger">*</span></label
+      >{{ "function.name" | translate }}
+      <span class="text-danger">*</span></label
     >
     <input
       type="text"
@@ -11,14 +12,20 @@
       maxlength="100"
       [class.is-invalid]="isFieldInvalid('name')"
     />
-    <div class="form-text">最多 100 字元</div>
-    <app-validation-error [control]="form.get('name')" [fieldName]="'功能名稱'">
+    <div class="form-text">
+      {{ "validation.maxCharacters" | translate: [100] }}
+    </div>
+    <app-validation-error
+      [control]="form.get('name')"
+      [fieldName]="'function.name' | translate"
+    >
     </app-validation-error>
   </div>
 
   <div class="mb-3">
     <label for="code" class="form-label"
-      >功能代碼 <span class="text-danger">*</span></label
+      >{{ "function.code" | translate }}
+      <span class="text-danger">*</span></label
     >
     <input
       type="text"
@@ -29,14 +36,17 @@
       [class.is-invalid]="isFieldInvalid('code')"
     />
     <div class="form-text">
-      唯一識別碼，例如：dashboard、user-management，最多 50 字元
+      {{ "function.codeHint" | translate }}
     </div>
-    <app-validation-error [control]="form.get('code')" [fieldName]="'功能代碼'">
+    <app-validation-error
+      [control]="form.get('code')"
+      [fieldName]="'function.code' | translate"
+    >
     </app-validation-error>
   </div>
 
   <div class="mb-3">
-    <label for="url" class="form-label">連結網址</label>
+    <label for="url" class="form-label">{{ "function.url" | translate }}</label>
     <input
       type="text"
       class="form-control"
@@ -46,15 +56,22 @@
       maxlength="500"
       [class.is-invalid]="isFieldInvalid('url')"
     />
-    <div class="form-text">最多 500 字元</div>
-    <app-validation-error [control]="form.get('url')" [fieldName]="'連結網址'">
+    <div class="form-text">
+      {{ "validation.maxCharacters" | translate: [500] }}
+    </div>
+    <app-validation-error
+      [control]="form.get('url')"
+      [fieldName]="'function.url' | translate"
+    >
     </app-validation-error>
   </div>
 
   <div class="mb-3">
-    <label for="parentId" class="form-label">父功能</label>
+    <label for="parentId" class="form-label">{{
+      "function.parentFunction" | translate
+    }}</label>
     <select class="form-select" id="parentId" formControlName="parentId">
-      <option [ngValue]="null">無（頂層功能）</option>
+      <option [ngValue]="null">{{ "function.noParent" | translate }}</option>
       @for (option of flattenedParentOptions; track option.id) {
         <option [ngValue]="option.id">
           {{ option.indent }}{{ option.name }} ({{ option.code }})
@@ -64,7 +81,7 @@
   </div>
 
   <div class="mb-3">
-    <label class="form-label">圖示</label>
+    <label class="form-label">{{ "function.icon" | translate }}</label>
     <div class="input-group mb-2">
       @if (form.get("icon")?.value) {
         <span class="input-group-text">
@@ -83,7 +100,8 @@
         class="btn btn-outline-secondary"
         (click)="toggleIconPicker()"
       >
-        <i class="bi bi-grid-3x3-gap"></i> 選擇
+        <i class="bi bi-grid-3x3-gap"></i>
+        {{ "function.selectIcon" | translate }}
       </button>
     </div>
 
@@ -95,7 +113,7 @@
             <input
               type="text"
               class="form-control form-control-sm"
-              placeholder="搜尋圖示..."
+              placeholder="{{ 'function.searchIcon' | translate }}"
               [(ngModel)]="iconSearchTerm"
               [ngModelOptions]="{ standalone: true }"
             />
@@ -127,13 +145,15 @@
         formControlName="openInNewWindow"
       />
       <label class="form-check-label" for="openInNewWindow">
-        在新視窗開啟
+        {{ "function.openInNewWindow" | translate }}
       </label>
     </div>
   </div>
 
   <div class="mb-3">
-    <label for="sortOrder" class="form-label">排序順序</label>
+    <label for="sortOrder" class="form-label">{{
+      "function.sortOrder" | translate
+    }}</label>
     <input
       type="number"
       class="form-control"
@@ -141,12 +161,12 @@
       formControlName="sortOrder"
       min="0"
     />
-    <div class="form-text">數字越小排序越前面</div>
+    <div class="form-text">{{ "function.sortOrderHint" | translate }}</div>
   </div>
 
   <div class="d-flex justify-content-end gap-2 mt-4">
     <button type="button" class="btn btn-secondary" (click)="onCancel.emit()">
-      取消
+      {{ "common.cancel" | translate }}
     </button>
     <button
       type="submit"
@@ -156,7 +176,9 @@
       @if (isSubmitting) {
         <span class="spinner-border spinner-border-sm me-1"></span>
       }
-      {{ isEditing ? "更新" : "建立" }}
+      {{
+        isEditing ? ("label.update" | translate) : ("label.create" | translate)
+      }}
     </button>
   </div>
 </form>

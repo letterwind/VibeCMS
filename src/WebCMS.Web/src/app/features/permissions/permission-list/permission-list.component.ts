@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RoleService } from '../../../core/services/role.service';
 import { PermissionService } from '../../../core/services/permission.service';
+import { LanguageService } from '../../../core/services/language.service';
+import { TranslatePipe } from '../../../core/pipes/translate.pipe';
 import { RoleDto } from '../../../core/models/role.model';
 import {
   FunctionPermissionDto,
@@ -13,7 +15,7 @@ import {
 @Component({
   selector: 'app-permission-list',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TranslatePipe],
   templateUrl: './permission-list.component.html',
   styleUrl: './permission-list.component.scss'
 })
@@ -28,7 +30,8 @@ export class PermissionListComponent implements OnInit {
 
   constructor(
     private roleService: RoleService,
-    private permissionService: PermissionService
+    private permissionService: PermissionService,
+    private languageService: LanguageService
   ) {}
 
   ngOnInit(): void {
@@ -42,7 +45,7 @@ export class PermissionListComponent implements OnInit {
       },
       error: (err) => {
         console.error('Failed to load roles:', err);
-        this.showMessage('載入角色失敗', true);
+        this.showMessage(this.languageService.getTranslation('permission.loadRolesFailed'), true);
       }
     });
   }
@@ -66,7 +69,7 @@ export class PermissionListComponent implements OnInit {
       },
       error: (err) => {
         console.error('Failed to load permissions:', err);
-        this.showMessage('載入權限失敗', true);
+        this.showMessage(this.languageService.getTranslation('permission.loadPermissionsFailed'), true);
       }
     });
   }
@@ -118,12 +121,12 @@ export class PermissionListComponent implements OnInit {
     this.permissionService.setPermissions(this.selectedRoleId, request).subscribe({
       next: () => {
         this.saving = false;
-        this.showMessage('權限設定已儲存', false);
+        this.showMessage(this.languageService.getTranslation('permission.saveSuccess'), false);
       },
       error: (err) => {
         this.saving = false;
         console.error('Failed to save permissions:', err);
-        this.showMessage('儲存權限失敗', true);
+        this.showMessage(this.languageService.getTranslation('permission.saveFailed'), true);
       }
     });
   }

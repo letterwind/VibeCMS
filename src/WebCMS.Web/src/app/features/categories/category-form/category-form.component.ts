@@ -4,11 +4,13 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { CategoryService } from '../../../core/services/category.service';
 import { CategoryDto, CreateCategoryRequest, UpdateCategoryRequest } from '../../../core/models/category.model';
 import { ValidationErrorComponent } from '../../../shared/components/validation-error/validation-error.component';
+import { TranslatePipe } from '../../../core/pipes/translate.pipe';
+import { LanguageService } from '../../../core/services/language.service';
 
 @Component({
   selector: 'app-category-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, ValidationErrorComponent],
+  imports: [CommonModule, ReactiveFormsModule, ValidationErrorComponent, TranslatePipe],
   templateUrl: './category-form.component.html',
   styleUrl: './category-form.component.scss'
 })
@@ -26,7 +28,8 @@ export class CategoryFormComponent implements OnInit, OnChanges {
 
   constructor(
     private fb: FormBuilder,
-    private categoryService: CategoryService
+    private categoryService: CategoryService,
+    public languageService: LanguageService
   ) {}
 
   ngOnInit(): void {

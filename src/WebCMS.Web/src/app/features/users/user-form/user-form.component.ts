@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, switchMap, of, catchError } from 'rxjs';
 import { UserService } from '../../../core/services/user.service';
+import { LanguageService } from '../../../core/services/language.service';
+import { TranslatePipe } from '../../../core/pipes/translate.pipe';
 import { UserDto, CreateUserRequest, UpdateUserRequest } from '../../../core/models/user.model';
 import { RoleDto } from '../../../core/models/role.model';
 import { ValidationErrorComponent } from '../../../shared/components/validation-error/validation-error.component';
@@ -11,7 +13,7 @@ import { CustomValidators } from '../../../shared/validators/custom-validators';
 @Component({
   selector: 'app-user-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, ValidationErrorComponent],
+  imports: [CommonModule, ReactiveFormsModule, ValidationErrorComponent, TranslatePipe],
   templateUrl: './user-form.component.html',
   styleUrl: './user-form.component.scss'
 })
@@ -29,7 +31,8 @@ export class UserFormComponent implements OnInit, OnChanges {
 
   constructor(
     private fb: FormBuilder,
-    private userService: UserService
+    private userService: UserService,
+    public languageService: LanguageService
   ) {}
 
   ngOnInit(): void {
@@ -159,7 +162,7 @@ export class UserFormComponent implements OnInit, OnChanges {
         },
         error: (err) => {
           this.isSubmitting = false;
-          this.errorMessage = err.error?.message || '更新使用者失敗';
+          this.errorMessage = err.error?.message || this.languageService.getTranslation('user.updateUserFailed');
         }
       });
     } else {
@@ -177,7 +180,7 @@ export class UserFormComponent implements OnInit, OnChanges {
         },
         error: (err) => {
           this.isSubmitting = false;
-          this.errorMessage = err.error?.message || '建立使用者失敗';
+          this.errorMessage = err.error?.message || this.languageService.getTranslation('user.createUserFailed');
         }
       });
     }

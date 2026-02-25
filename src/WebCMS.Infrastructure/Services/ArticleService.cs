@@ -13,16 +13,21 @@ namespace WebCMS.Infrastructure.Services;
 public class ArticleService : IArticleService
 {
     private readonly ApplicationDbContext _context;
+    private readonly ITranslationService<Article> _translationService;
     private const int MaxTitleLength = 200;
 
-    public ArticleService(ApplicationDbContext context)
+    public ArticleService(ApplicationDbContext context, ITranslationService<Article> translationService)
     {
         _context = context;
+        _translationService = translationService;
     }
 
-    public async Task<PagedResult<ArticleDto>> GetArticlesAsync(QueryParameters query, int? categoryId = null)
+    public async Task<PagedResult<ArticleDto>> GetArticlesAsync(QueryParameters query, int? categoryId = null, string? languageCode = null)
     {
+        languageCode ??= "zh-TW";
+
         var queryable = _context.Articles
+            .Where(a => a.LanguageCode == languageCode)
             .Include(a => a.Category)
             .Include(a => a.Creator)
             .Include(a => a.ArticleTags)
@@ -72,27 +77,36 @@ public class ArticleService : IArticleService
         var items = await queryable
             .Skip((query.PageNumber - 1) * query.PageSize)
             .Take(query.PageSize)
-            .Select(a => MapToDto(a))
+            .Select(a => a)
             .ToListAsync();
 
+        var dtos = new List<ArticleDto>();
+        foreach (var item in items)
+        {
+            var dto = await MapToDtoAsync(item);
+            dtos.Add(dto);
+        }
+
         return new PagedResult<ArticleDto>(
-            items,
+            dtos,
             totalCount,
             query.PageNumber,
             query.PageSize,
             totalPages);
     }
 
-    public async Task<ArticleDto?> GetArticleByIdAsync(int id)
+    public async Task<ArticleDto?> GetArticleByIdAsync(int id, string? languageCode = null)
     {
+        languageCode ??= "zh-TW";
+
         var article = await _context.Articles
             .Include(a => a.Category)
             .Include(a => a.Creator)
             .Include(a => a.ArticleTags)
                 .ThenInclude(at => at.Tag)
-            .FirstOrDefaultAsync(a => a.Id == id);
+            .FirstOrDefaultAsync(a => a.Id == id && a.LanguageCode == languageCode);
 
-        return article == null ? null : MapToDto(article);
+        return article == null ? null : await MapToDtoAsync(article);
     }
 
     public async Task<ArticleDto> CreateArticleAsync(CreateArticleRequest request, int? userId = null)
@@ -286,6 +300,7 @@ public class ArticleService : IArticleService
             article.Title,
             article.Content,
             article.Slug,
+            article.LanguageCode,
             article.CategoryId,
             article.Category?.Name,
             article.ArticleTags.Select(at => at.Tag?.Name ?? string.Empty).Where(n => !string.IsNullOrEmpty(n)).ToList(),
@@ -296,6 +311,30 @@ public class ArticleService : IArticleService
             article.UpdatedAt,
             article.CreatedBy,
             article.Creator?.DisplayName
+        );
+    }
+
+    private async Task<ArticleDto> MapToDtoAsync(Article article)
+    {
+        var translationStatus = await _translationService.GetTranslationStatusAsync(article.Id);
+        
+        return new ArticleDto(
+            article.Id,
+            article.Title,
+            article.Content,
+            article.Slug,
+            article.LanguageCode,
+            article.CategoryId,
+            article.Category?.Name,
+            article.ArticleTags.Select(at => at.Tag?.Name ?? string.Empty).Where(n => !string.IsNullOrEmpty(n)).ToList(),
+            article.MetaTitle,
+            article.MetaDescription,
+            article.MetaKeywords,
+            article.CreatedAt,
+            article.UpdatedAt,
+            article.CreatedBy,
+            article.Creator?.DisplayName,
+            new Dictionary<string, bool>(translationStatus)
         );
     }
 }

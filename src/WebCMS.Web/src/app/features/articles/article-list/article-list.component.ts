@@ -1,3 +1,4 @@
+import { TranslatePipe } from './../../../core/pipes/translate.pipe';
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -8,32 +9,53 @@ import { SlidePanelComponent } from '../../../shared/components/slide-panel/slid
 import { ArticleDto, QueryParameters } from '../../../core/models/article.model';
 import { CategoryDto } from '../../../core/models/category.model';
 import { ArticleFormComponent } from '../article-form/article-form.component';
+import { RouterModule } from '@angular/router';
+import { LanguageService } from '../../../core/services/language.service';
+import { 
+  DataTableComponent, 
+  ColumnDefinition, 
+  PaginationConfig, 
+  PageEvent, 
+  SortEvent, 
+  RowActionEvent 
+} from '../../../shared/components/data-table/data-table.component';
 
 @Component({
   selector: 'app-article-list',
   standalone: true,
   imports: [
     CommonModule,
+    RouterModule,
     FormsModule,
+    DataTableComponent,
     SlidePanelComponent,
-    ArticleFormComponent
+    ArticleFormComponent,
+    TranslatePipe
   ],
   templateUrl: './article-list.component.html',
   styleUrl: './article-list.component.scss'
 })
-export class ArticleListComponent implements OnInit {
-  articles: ArticleDto[] = [];
+export class ArticleListComponent implements OnInit
+{
+  currentLang = 'zh-TW';
+  articles: any[] = [];
   categories: CategoryDto[] = [];
   searchTerm = '';
   selectedCategoryId: number | null = null;
   isPanelOpen = false;
   isEditing = false;
-  isLoading = false;
   selectedArticle: ArticleDto | null = null;
-  totalCount = 0;
-  totalPages = 0;
 
-  query: QueryParameters = {
+  columns: ColumnDefinition[] = [];
+
+  pagination: PaginationConfig = {
+    pageNumber: 1,
+    pageSize: 10,
+    totalCount: 0,
+    totalPages: 0
+  };
+
+  private query: QueryParameters = {
     pageNumber: 1,
     pageSize: 10
   };
@@ -42,138 +64,165 @@ export class ArticleListComponent implements OnInit {
     private articleService: ArticleService,
     private categoryService: CategoryService,
     private confirmDialog: ConfirmDialogService
-  ) {}
+    ,
+    public languageService: LanguageService
+  ) { }
 
-  ngOnInit(): void {
+  ngOnInit(): void
+  {
+    // 取得目前語言（同步值）並載入資料
+    this.currentLang = this.languageService.getCurrentLanguageSync();
+    this.initColumns();
     this.loadArticles();
     this.loadCategories();
   }
 
-  loadArticles(): void {
-    this.isLoading = true;
+  private initColumns(): void {
+    this.columns = [
+      { key: 'id', header: 'ID', width: '80px', sortable: true },
+      { key: 'title', header: this.languageService.getTranslation('article.title'), sortable: true },
+      { key: 'categoryName', header: this.languageService.getTranslation('category.title'), width: '150px' },
+      { key: 'tags', header: this.languageService.getTranslation('article.tags'), width: '200px' },
+      { key: 'createdAt', header: this.languageService.getTranslation('label.createdAt'), width: '180px', sortable: true }
+    ];
+  }
+
+  loadArticles(): void
+  {
     this.articleService.getArticles(this.query, this.selectedCategoryId ?? undefined).subscribe({
-      next: (result) => {
-        this.articles = result.items;
-        this.totalCount = result.totalCount;
-        this.totalPages = result.totalPages;
-        this.isLoading = false;
+      next: (result) =>
+      {
+        this.articles = result.items.map(article => ({
+          ...article,
+          tags: article.tags?.slice(0, 3).join(', ') || '',
+          createdAt: new Date(article.createdAt).toLocaleString('zh-TW', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit'
+          })
+        }));
+        this.pagination = {
+          pageNumber: result.pageNumber,
+          pageSize: result.pageSize,
+          totalCount: result.totalCount,
+          totalPages: result.totalPages
+        };
       },
-      error: (err) => {
+      error: (err) =>
+      {
         console.error('Failed to load articles:', err);
-        this.isLoading = false;
       }
     });
   }
 
-  loadCategories(): void {
+  loadCategories(): void
+  {
     this.categoryService.getAllCategories().subscribe({
-      next: (categories) => {
+      next: (categories) =>
+      {
         this.categories = categories;
       },
-      error: (err) => {
+      error: (err) =>
+      {
         console.error('Failed to load categories:', err);
       }
     });
   }
 
-  search(): void {
+  search(): void
+  {
     this.query.searchTerm = this.searchTerm;
     this.query.pageNumber = 1;
     this.loadArticles();
   }
 
-  filterByCategory(): void {
+  filterByCategory(): void
+  {
     this.query.pageNumber = 1;
     this.loadArticles();
   }
 
-  goToPage(page: number): void {
-    if (page >= 1 && page <= this.totalPages) {
-      this.query.pageNumber = page;
-      this.loadArticles();
+  onPageChange(event: PageEvent): void {
+    this.query.pageNumber = event.pageNumber;
+    this.query.pageSize = event.pageSize;
+    this.loadArticles();
+  }
+
+  onSort(event: SortEvent): void {
+    this.query.sortBy = event.column;
+    this.query.sortDescending = event.direction === 'desc';
+    this.loadArticles();
+  }
+
+  onRowAction(event: RowActionEvent<ArticleDto>): void {
+    if (event.action === 'edit') {
+      this.openEditPanel(event.item);
+    } else if (event.action === 'delete') {
+      this.deleteArticle(event.item);
     }
   }
 
-  getPageNumbers(): number[] {
-    const pages: number[] = [];
-    const current = this.query.pageNumber || 1;
-    const total = this.totalPages;
-    
-    let start = Math.max(1, current - 2);
-    let end = Math.min(total, current + 2);
-    
-    if (end - start < 4) {
-      if (start === 1) {
-        end = Math.min(total, start + 4);
-      } else {
-        start = Math.max(1, end - 4);
-      }
-    }
-    
-    for (let i = start; i <= end; i++) {
-      pages.push(i);
-    }
-    
-    return pages;
-  }
-
-  getLevelPrefix(level: number): string {
+  getLevelPrefix(level: number): string
+  {
     return '　'.repeat(level - 1) + (level > 1 ? '└ ' : '');
   }
 
-  formatDate(date: Date): string {
-    return new Date(date).toLocaleString('zh-TW', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  }
-
-  openCreatePanel(): void {
+  openCreatePanel(): void
+  {
     this.selectedArticle = null;
     this.isEditing = false;
     this.isPanelOpen = true;
   }
 
-  openEditPanel(article: ArticleDto): void {
-    this.articleService.getArticle(article.id).subscribe({
-      next: (fullArticle) => {
+  openEditPanel(article: ArticleDto): void
+  {
+    this.articleService.getArticle(typeof article.id === 'string' ? parseInt(article.id, 10) : article.id).subscribe({
+      next: (fullArticle) =>
+      {
         this.selectedArticle = fullArticle;
         this.isEditing = true;
         this.isPanelOpen = true;
       },
-      error: (err) => {
+      error: (err) =>
+      {
         console.error('Failed to load article:', err);
       }
     });
   }
 
-  closePanel(): void {
+  closePanel(): void
+  {
     this.isPanelOpen = false;
     this.selectedArticle = null;
   }
 
-  onSave(article: ArticleDto): void {
+  onSave(): void
+  {
     this.closePanel();
     this.loadArticles();
   }
 
-  deleteArticle(article: ArticleDto): void {
+  deleteArticle(article: ArticleDto): void
+  {
     this.confirmDialog.confirm({
-      title: '刪除文章',
+      title: this.languageService.getTranslation('button.deleteArticle'),
       message: `確定要刪除文章「${article.title}」嗎？`,
-      confirmText: '刪除',
-      cancelText: '取消',
+      confirmText: this.languageService.getTranslation('common.delete'),
+      cancelText: this.languageService.getTranslation('common.cancel'),
       type: 'danger'
-    }).subscribe(confirmed => {
-      if (confirmed) {
-        this.articleService.deleteArticle(article.id).subscribe({
-          next: () => {
+    }).subscribe(confirmed =>
+    {
+      if (confirmed)
+      {
+        this.articleService.deleteArticle(typeof article.id === 'string' ? parseInt(article.id, 10) : article.id).subscribe({
+          next: () =>
+          {
             this.loadArticles();
           },
-          error: (err) => {
+          error: (err) =>
+          {
             console.error('Failed to delete article:', err);
           }
         });

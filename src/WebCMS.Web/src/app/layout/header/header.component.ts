@@ -2,13 +2,14 @@ import { Component, Output, EventEmitter, Input, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
+import { LanguageSelectorComponent } from '../../shared/components/language-selector/language-selector.component';
 
 type DeviceType = 'mobile' | 'tablet' | 'desktop';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, LanguageSelectorComponent],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
 })

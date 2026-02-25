@@ -8,6 +8,7 @@ public record ArticleDto(
     string Title,
     string Content,
     string Slug,
+    string LanguageCode,
     int CategoryId,
     string? CategoryName,
     List<string> Tags,
@@ -17,5 +18,9 @@ public record ArticleDto(
     DateTime CreatedAt,
     DateTime UpdatedAt,
     int? CreatedBy,
-    string? CreatedByName
+    string? CreatedByName,
+    /// <summary>
+    /// 翻譯狀態（鍵為語言代碼，值為是否已翻譯）
+    /// </summary>
+    Dictionary<string, bool>? AvailableLanguages = null
 );

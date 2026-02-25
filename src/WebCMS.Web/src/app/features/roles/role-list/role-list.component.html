@@ -1,8 +1,11 @@
 <div class="container-fluid py-4">
   <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="mb-0"><i class="bi bi-people-fill me-2"></i>角色管理</h2>
+    <h2 class="mb-0">
+      <i class="bi bi-people-fill me-2"></i
+      >{{ "role.roleManagement" | translate }}
+    </h2>
     <button class="btn btn-primary" (click)="openCreatePanel()">
-      <i class="bi bi-plus-lg me-1"></i>新增角色
+      <i class="bi bi-plus-lg me-1"></i>{{ "button.addRole" | translate }}
     </button>
   </div>
 
@@ -18,12 +21,12 @@
             <input
               type="text"
               class="form-control"
-              placeholder="搜尋角色名稱或描述..."
+              placeholder="{{ 'role.searchPlaceholder' | translate }}"
               [(ngModel)]="searchTerm"
               (keyup.enter)="search()"
             />
             <button class="btn btn-outline-secondary" (click)="search()">
-              搜尋
+              {{ "common.search" | translate }}
             </button>
           </div>
         </div>
@@ -50,7 +53,11 @@
   <!-- Slide Panel for Create/Edit -->
   <app-slide-panel
     [isOpen]="isPanelOpen"
-    [title]="isEditing ? '編輯角色' : '新增角色'"
+    [title]="
+      isEditing
+        ? ('button.editRole' | translate)
+        : ('button.addRole' | translate)
+    "
     size="md"
     (onClose)="closePanel()"
   >

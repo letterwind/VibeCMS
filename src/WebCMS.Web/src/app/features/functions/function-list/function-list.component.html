@@ -1,15 +1,20 @@
 <div class="container-fluid py-4">
   <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="mb-0"><i class="bi bi-menu-button-wide me-2"></i>功能管理</h2>
+    <h2 class="mb-0">
+      <i class="bi bi-menu-button-wide me-2"></i
+      >{{ "function.functionManagement" | translate }}
+    </h2>
     <div>
       <button class="btn btn-outline-secondary me-2" (click)="toggleAll(true)">
-        <i class="bi bi-arrows-expand me-1"></i>全部展開
+        <i class="bi bi-arrows-expand me-1"></i
+        >{{ "function.expandAll" | translate }}
       </button>
       <button class="btn btn-outline-secondary me-2" (click)="toggleAll(false)">
-        <i class="bi bi-arrows-collapse me-1"></i>全部收起
+        <i class="bi bi-arrows-collapse me-1"></i
+        >{{ "function.collapseAll" | translate }}
       </button>
       <button class="btn btn-primary" (click)="openCreatePanel()">
-        <i class="bi bi-plus-lg me-1"></i>新增功能
+        <i class="bi bi-plus-lg me-1"></i>{{ "button.addFunction" | translate }}
       </button>
     </div>
   </div>
@@ -26,12 +31,12 @@
             <input
               type="text"
               class="form-control"
-              placeholder="搜尋功能名稱或代碼..."
+              placeholder="{{ 'function.searchPlaceholder' | translate }}"
               [(ngModel)]="searchTerm"
               (keyup.enter)="search()"
             />
             <button class="btn btn-outline-secondary" (click)="search()">
-              搜尋
+              {{ "common.search" | translate }}
             </button>
             @if (searchTerm) {
               <button class="btn btn-outline-danger" (click)="clearSearch()">
@@ -51,13 +56,17 @@
         <table class="table table-hover mb-0">
           <thead class="table-light">
             <tr>
-              <th style="width: 300px">功能名稱</th>
-              <th>功能代碼</th>
-              <th style="width: 80px">圖示</th>
-              <th>連結網址</th>
-              <th style="width: 80px">新視窗</th>
-              <th style="width: 80px">排序</th>
-              <th style="width: 120px">操作</th>
+              <th style="width: 300px">{{ "function.name" | translate }}</th>
+              <th>{{ "function.code" | translate }}</th>
+              <th style="width: 80px">{{ "function.icon" | translate }}</th>
+              <th>{{ "function.url" | translate }}</th>
+              <th style="width: 80px">
+                {{ "function.openInNewWindow" | translate }}
+              </th>
+              <th style="width: 80px">
+                {{ "function.sortOrder" | translate }}
+              </th>
+              <th style="width: 120px">{{ "common.actions" | translate }}</th>
             </tr>
           </thead>
           <tbody>
@@ -65,7 +74,9 @@
               <tr>
                 <td colspan="7" class="text-center py-4">
                   <div class="spinner-border text-primary" role="status">
-                    <span class="visually-hidden">載入中...</span>
+                    <span class="visually-hidden">{{
+                      "common.loading" | translate
+                    }}</span>
                   </div>
                 </td>
               </tr>
@@ -74,9 +85,10 @@
                 <td colspan="7" class="text-center py-4 text-muted">
                   <i class="bi bi-inbox fs-1 d-block mb-2"></i>
                   @if (searchTerm) {
-                    找不到符合「{{ searchTerm }}」的功能
+                    {{ "function.noSearchResults" | translate }}
+                    {{ searchTerm }}
                   } @else {
-                    尚無功能資料
+                    {{ "function.noData" | translate }}
                   }
                 </td>
               </tr>
@@ -108,7 +120,11 @@
                 class="btn btn-sm btn-link p-0 me-2 text-secondary"
                 (click)="toggleExpand(item.id)"
                 [attr.aria-expanded]="isExpanded(item.id)"
-                [attr.aria-label]="isExpanded(item.id) ? '收起' : '展開'"
+                [attr.aria-label]="
+                  isExpanded(item.id)
+                    ? ('function.collapse' | translate)
+                    : ('function.expand' | translate)
+                "
               >
                 <i
                   class="bi"
@@ -155,14 +171,14 @@
             <button
               class="btn btn-outline-primary"
               (click)="openEditPanel(item)"
-              title="編輯"
+              [title]="'label.edit' | translate"
             >
               <i class="bi bi-pencil"></i>
             </button>
             <button
               class="btn btn-outline-danger"
               (click)="deleteFunction(item)"
-              title="刪除"
+              [title]="'label.delete' | translate"
             >
               <i class="bi bi-trash"></i>
             </button>
@@ -183,7 +199,11 @@
   <!-- Slide Panel for Create/Edit -->
   <app-slide-panel
     [isOpen]="isPanelOpen"
-    [title]="isEditing ? '編輯功能' : '新增功能'"
+    [title]="
+      isEditing
+        ? ('button.editFunction' | translate)
+        : ('button.addFunction' | translate)
+    "
     size="md"
     (onClose)="closePanel()"
   >

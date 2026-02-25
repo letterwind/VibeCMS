@@ -1,0 +1,71 @@
+{
+  "zh-TW": {
+    "validation": {
+      "maxLength": "最多 {0} 字元",
+      "minLength": "至少 {0} 字元",
+      "maxLengthWithCount": "最多 {0} 字元 ({1}/{0})",
+      "maxLengthWithSeparator": "最多 {0} 字元，以逗號分隔",
+      "range": "請輸入 {0} 到 {1} 之間的數字",
+      "fileSize": "檔案大小不能超過 {0} MB",
+      "fileType": "只允許上傳 {0} 格式的檔案"
+    },
+    "message": {
+      "greeting": "你好，{name}！",
+      "welcome": "歡迎 {username}，你有 {count} 條新訊息",
+      "fileInfo": "檔案 {filename} 大小為 {size} MB",
+      "articleStats": "共 {total} 篇文章，已發布 {published} 篇",
+      "userProfile": "{name} - {role}"
+    },
+    "error": {
+      "timeout": "操作超時（{seconds} 秒），請重試",
+      "notFound": "找不到 {resource}",
+      "unauthorized": "你沒有權限執行 {action}"
+    }
+  },
+  "en-US": {
+    "validation": {
+      "maxLength": "Maximum {0} characters",
+      "minLength": "Minimum {0} characters",
+      "maxLengthWithCount": "Maximum {0} characters ({1}/{0})",
+      "maxLengthWithSeparator": "Maximum {0} characters, separated by commas",
+      "range": "Please enter a number between {0} and {1}",
+      "fileSize": "File size cannot exceed {0} MB",
+      "fileType": "Only {0} format files are allowed"
+    },
+    "message": {
+      "greeting": "Hello, {name}!",
+      "welcome": "Welcome {username}, you have {count} new messages",
+      "fileInfo": "File {filename} is {size} MB",
+      "articleStats": "{total} articles in total, {published} published",
+      "userProfile": "{name} - {role}"
+    },
+    "error": {
+      "timeout": "Operation timed out ({seconds} seconds), please retry",
+      "notFound": "{resource} not found",
+      "unauthorized": "You don't have permission to {action}"
+    }
+  },
+  "ja-JP": {
+    "validation": {
+      "maxLength": "最大 {0} 文字",
+      "minLength": "最小 {0} 文字",
+      "maxLengthWithCount": "最大 {0} 文字 ({1}/{0})",
+      "maxLengthWithSeparator": "最大 {0} 文字、カンマで区切る",
+      "range": "{0} から {1} までの数字を入力してください",
+      "fileSize": "ファイルサイズは {0} MB を超えることはできません",
+      "fileType": "{0} 形式のファイルのみアップロード可能"
+    },
+    "message": {
+      "greeting": "こんにちは、{name}さん！",
+      "welcome": "ようこそ {username}さん、{count} 件の新しいメッセージがあります",
+      "fileInfo": "ファイル {filename} のサイズは {size} MB です",
+      "articleStats": "合計 {total} 件の記事、{published} 件公開済み",
+      "userProfile": "{name} - {role}"
+    },
+    "error": {
+      "timeout": "操作がタイムアウトしました（{seconds} 秒）、再試行してください",
+      "notFound": "{resource} が見つかりません",
+      "unauthorized": "{action} の権限がありません"
+    }
+  }
+}

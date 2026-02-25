@@ -2,13 +2,15 @@ import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChange
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { RoleService } from '../../../core/services/role.service';
+import { LanguageService } from '../../../core/services/language.service';
+import { TranslatePipe } from '../../../core/pipes/translate.pipe';
 import { RoleDto, CreateRoleRequest, UpdateRoleRequest } from '../../../core/models/role.model';
 import { ValidationErrorComponent } from '../../../shared/components/validation-error/validation-error.component';
 
 @Component({
   selector: 'app-role-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, ValidationErrorComponent],
+  imports: [CommonModule, ReactiveFormsModule, ValidationErrorComponent, TranslatePipe],
   templateUrl: './role-form.component.html',
   styleUrl: './role-form.component.scss'
 })
@@ -23,7 +25,8 @@ export class RoleFormComponent implements OnInit, OnChanges {
 
   constructor(
     private fb: FormBuilder,
-    private roleService: RoleService
+    private roleService: RoleService,
+    public languageService: LanguageService
   ) {}
 
   ngOnInit(): void {

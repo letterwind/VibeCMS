@@ -89,7 +89,7 @@ public class SettingsService : ISettingsService
     {
         await EnsureSettingsExistAsync();
         var settings = await _context.HeaderSettings.FirstAsync();
-        return MapToHtmlSettingsDto(settings.Id, settings.HtmlContent, settings.UpdatedAt);
+        return MapToHtmlSettingsDto(settings.Id, settings.LanguageCode, settings.HtmlContent, settings.CreatedAt, settings.UpdatedAt);
     }
 
     public async Task<HtmlSettingsDto> UpdateHeaderSettingsAsync(UpdateHtmlSettingsRequest request)
@@ -101,7 +101,7 @@ public class SettingsService : ISettingsService
         settings.UpdatedAt = DateTime.UtcNow;
 
         await _context.SaveChangesAsync();
-        return MapToHtmlSettingsDto(settings.Id, settings.HtmlContent, settings.UpdatedAt);
+        return MapToHtmlSettingsDto(settings.Id, settings.LanguageCode, settings.HtmlContent, settings.CreatedAt, settings.UpdatedAt);
     }
 
     #endregion
@@ -112,7 +112,7 @@ public class SettingsService : ISettingsService
     {
         await EnsureSettingsExistAsync();
         var settings = await _context.FooterSettings.FirstAsync();
-        return MapToHtmlSettingsDto(settings.Id, settings.HtmlContent, settings.UpdatedAt);
+        return MapToHtmlSettingsDto(settings.Id, settings.LanguageCode, settings.HtmlContent, settings.CreatedAt, settings.UpdatedAt);
     }
 
     public async Task<HtmlSettingsDto> UpdateFooterSettingsAsync(UpdateHtmlSettingsRequest request)
@@ -124,7 +124,7 @@ public class SettingsService : ISettingsService
         settings.UpdatedAt = DateTime.UtcNow;
 
         await _context.SaveChangesAsync();
-        return MapToHtmlSettingsDto(settings.Id, settings.HtmlContent, settings.UpdatedAt);
+        return MapToHtmlSettingsDto(settings.Id, settings.LanguageCode, settings.HtmlContent, settings.CreatedAt, settings.UpdatedAt);
     }
 
     #endregion
@@ -176,18 +176,20 @@ public class SettingsService : ISettingsService
     {
         return new SiteSettingsDto(
             settings.Id,
+            settings.LanguageCode,
             settings.MetaTitle,
             settings.MetaDescription,
             settings.MetaKeywords,
             settings.FaviconPath,
             settings.FaviconPath, // FaviconUrl 與 FaviconPath 相同
+            settings.CreatedAt,
             settings.UpdatedAt
         );
     }
 
-    private static HtmlSettingsDto MapToHtmlSettingsDto(int id, string? htmlContent, DateTime updatedAt)
+    private static HtmlSettingsDto MapToHtmlSettingsDto(int id, string languageCode, string? htmlContent, DateTime createdAt, DateTime updatedAt)
     {
-        return new HtmlSettingsDto(id, htmlContent, updatedAt);
+        return new HtmlSettingsDto(id, languageCode, htmlContent, createdAt, updatedAt);
     }
 
     #endregion

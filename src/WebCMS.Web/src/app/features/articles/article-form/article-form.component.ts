@@ -7,13 +7,15 @@ import { ArticleService } from '../../../core/services/article.service';
 import { CategoryService } from '../../../core/services/category.service';
 import { ValidationErrorComponent } from '../../../shared/components/validation-error/validation-error.component';
 import { EditorComponent } from '@tinymce/tinymce-angular';
+import { TranslatePipe } from '../../../core/pipes/translate.pipe';
+import { LanguageService } from '../../../core/services/language.service';
 
 declare const tinymce: any;
 
 @Component({
   selector: 'app-article-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, ValidationErrorComponent, EditorComponent],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, ValidationErrorComponent, EditorComponent, TranslatePipe],
   templateUrl: './article-form.component.html',
   styleUrl: './article-form.component.scss'
 })
@@ -49,7 +51,8 @@ export class ArticleFormComponent implements OnChanges, OnInit, OnDestroy, After
   constructor(
     private fb: FormBuilder,
     private articleService: ArticleService,
-    private categoryService: CategoryService
+    private categoryService: CategoryService,
+    public languageService: LanguageService
   ) {
     this.form = this.fb.group({
       title: ['', [Validators.required, Validators.maxLength(200)]],
@@ -202,7 +205,7 @@ export class ArticleFormComponent implements OnChanges, OnInit, OnDestroy, After
         metaKeywords: formValue.metaKeywords || null
       };
 
-      this.articleService.updateArticle(this.article.id, request).subscribe({
+      this.articleService.updateArticle(typeof this.article.id === 'string' ? parseInt(this.article.id, 10) : this.article.id, request).subscribe({
         next: (article) => {
           this.isSubmitting = false;
           this.onSave.emit(article);

@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RoleService } from '../../../core/services/role.service';
 import { ConfirmDialogService } from '../../../shared/components/confirm-dialog/confirm-dialog.service';
+import { TranslatePipe } from '../../../core/pipes/translate.pipe';
+import { LanguageService } from '../../../core/services/language.service';
 import { 
   DataTableComponent, 
   ColumnDefinition, 
@@ -23,7 +25,8 @@ import { RoleFormComponent } from '../role-form/role-form.component';
     FormsModule,
     DataTableComponent,
     SlidePanelComponent,
-    RoleFormComponent
+    RoleFormComponent,
+    TranslatePipe
   ],
   templateUrl: './role-list.component.html',
   styleUrl: './role-list.component.scss'
@@ -35,13 +38,7 @@ export class RoleListComponent implements OnInit {
   isEditing = false;
   selectedRole: RoleDto | null = null;
 
-  columns: ColumnDefinition[] = [
-    { key: 'id', header: 'ID', width: '80px', sortable: true },
-    { key: 'name', header: '角色名稱', sortable: true },
-    { key: 'description', header: '描述' },
-    { key: 'hierarchyLevel', header: '階層等級', width: '100px', sortable: true },
-    { key: 'createdAt', header: '建立時間', width: '180px', sortable: true }
-  ];
+  columns: ColumnDefinition[] = [];
 
   pagination: PaginationConfig = {
     pageNumber: 1,
@@ -57,11 +54,23 @@ export class RoleListComponent implements OnInit {
 
   constructor(
     private roleService: RoleService,
-    private confirmDialog: ConfirmDialogService
+    private confirmDialog: ConfirmDialogService,
+    private languageService: LanguageService
   ) {}
 
   ngOnInit(): void {
+    this.initColumns();
     this.loadRoles();
+  }
+
+  private initColumns(): void {
+    this.columns = [
+      { key: 'id', header: 'ID', width: '80px', sortable: true },
+      { key: 'name', header: this.languageService.getTranslation('role.name'), sortable: true },
+      { key: 'description', header: this.languageService.getTranslation('label.description') },
+      { key: 'hierarchyLevel', header: this.languageService.getTranslation('role.hierarchyLevel'), width: '100px', sortable: true },
+      { key: 'createdAt', header: this.languageService.getTranslation('label.createdAt'), width: '180px', sortable: true }
+    ];
   }
 
   loadRoles(): void {
@@ -141,10 +150,10 @@ export class RoleListComponent implements OnInit {
 
   deleteRole(role: RoleDto): void {
     this.confirmDialog.confirm({
-      title: '刪除角色',
-      message: `確定要刪除角色「${role.name}」嗎？此操作將執行軟刪除。`,
-      confirmText: '刪除',
-      cancelText: '取消',
+      title: this.languageService.getTranslation('role.deleteRole'),
+      message: this.languageService.getTranslation('role.deleteRoleConfirm').replace('{0}', role.name),
+      confirmText: this.languageService.getTranslation('common.delete'),
+      cancelText: this.languageService.getTranslation('common.cancel'),
       type: 'danger'
     }).subscribe(confirmed => {
       if (confirmed) {

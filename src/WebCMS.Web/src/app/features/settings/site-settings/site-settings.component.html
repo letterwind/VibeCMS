@@ -1,25 +1,29 @@
 <div class="container-fluid py-4">
   <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="mb-0"><i class="bi bi-gear-fill me-2"></i>網站設定</h2>
+    <h2 class="mb-0">
+      <i class="bi bi-gear-fill me-2"></i>{{ "siteSettings.title" | translate }}
+    </h2>
   </div>
 
   <div class="card">
     <div class="card-header">
-      <h5 class="mb-0">SEO 設定</h5>
+      <h5 class="mb-0">{{ "siteSettings.seoSettings" | translate }}</h5>
     </div>
     <div class="card-body">
       @if (loading) {
         <div class="text-center py-5">
           <div class="spinner-border text-primary" role="status">
-            <span class="visually-hidden">載入中...</span>
+            <span class="visually-hidden">{{
+              "common.loading" | translate
+            }}</span>
           </div>
         </div>
       } @else {
         <form (ngSubmit)="save()">
           <div class="mb-3">
-            <label for="metaTitle" class="form-label"
-              >網站標題 (Meta Title)</label
-            >
+            <label for="metaTitle" class="form-label">{{
+              "siteSettings.metaTitle" | translate
+            }}</label>
             <input
               type="text"
               class="form-control"
@@ -27,15 +31,17 @@
               [(ngModel)]="settings.metaTitle"
               name="metaTitle"
               maxlength="100"
-              placeholder="輸入網站標題"
+              [placeholder]="'siteSettings.metaTitlePlaceholder' | translate"
             />
-            <div class="form-text">建議長度：50-60 字元</div>
+            <div class="form-text">
+              {{ "siteSettings.metaTitleHint" | translate }}
+            </div>
           </div>
 
           <div class="mb-3">
-            <label for="metaDescription" class="form-label"
-              >網站描述 (Meta Description)</label
-            >
+            <label for="metaDescription" class="form-label">{{
+              "siteSettings.metaDescription" | translate
+            }}</label>
             <textarea
               class="form-control"
               id="metaDescription"
@@ -43,15 +49,19 @@
               name="metaDescription"
               rows="3"
               maxlength="200"
-              placeholder="輸入網站描述"
+              [placeholder]="
+                'siteSettings.metaDescriptionPlaceholder' | translate
+              "
             ></textarea>
-            <div class="form-text">建議長度：150-160 字元</div>
+            <div class="form-text">
+              {{ "siteSettings.metaDescriptionHint" | translate }}
+            </div>
           </div>
 
           <div class="mb-3">
-            <label for="metaKeywords" class="form-label"
-              >關鍵字 (Meta Keywords)</label
-            >
+            <label for="metaKeywords" class="form-label">{{
+              "siteSettings.metaKeywords" | translate
+            }}</label>
             <input
               type="text"
               class="form-control"
@@ -59,17 +69,21 @@
               [(ngModel)]="settings.metaKeywords"
               name="metaKeywords"
               maxlength="200"
-              placeholder="輸入關鍵字，以逗號分隔"
+              [placeholder]="'siteSettings.metaKeywordsPlaceholder' | translate"
             />
-            <div class="form-text">多個關鍵字請以逗號分隔</div>
+            <div class="form-text">
+              {{ "siteSettings.metaKeywordsHint" | translate }}
+            </div>
           </div>
 
           <hr class="my-4" />
 
-          <h5 class="mb-3">Favicon 設定</h5>
+          <h5 class="mb-3">{{ "siteSettings.faviconSettings" | translate }}</h5>
 
           <div class="mb-3">
-            <label class="form-label">目前 Favicon</label>
+            <label class="form-label">{{
+              "siteSettings.currentFavicon" | translate
+            }}</label>
             <div class="d-flex align-items-center gap-3">
               @if (settings.faviconPath) {
                 <img
@@ -80,13 +94,17 @@
                 />
                 <span class="text-muted small">{{ settings.faviconPath }}</span>
               } @else {
-                <span class="text-muted">尚未設定 Favicon</span>
+                <span class="text-muted">{{
+                  "siteSettings.noFavicon" | translate
+                }}</span>
               }
             </div>
           </div>
 
           <div class="mb-4">
-            <label for="favicon" class="form-label">上傳新 Favicon</label>
+            <label for="favicon" class="form-label">{{
+              "siteSettings.uploadFavicon" | translate
+            }}</label>
             <input
               type="file"
               class="form-control"
@@ -95,7 +113,7 @@
               (change)="onFileSelected($event)"
             />
             <div class="form-text">
-              支援格式：ICO、PNG、JPG、GIF、SVG，檔案大小上限 1MB
+              {{ "siteSettings.faviconFormatHint" | translate }}
             </div>
           </div>
 
@@ -107,7 +125,8 @@
                   role="status"
                 ></span>
               }
-              <i class="bi bi-check-lg me-1"></i>儲存設定
+              <i class="bi bi-check-lg me-1"></i
+              >{{ "siteSettings.saveSettings" | translate }}
             </button>
           </div>
         </form>
