@@ -13,7 +13,7 @@ import {
   providedIn: 'root'
 })
 export class PermissionService {
-  private readonly basePath = '/api/permission';
+  private readonly basePath = '/permission';
 
   constructor(private api: ApiService) {}
 

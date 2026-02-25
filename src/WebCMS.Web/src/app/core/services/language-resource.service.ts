@@ -19,7 +19,7 @@ import { environment } from '../../../environments/environment';
 })
 export class LanguageResourceService
 {
-    private apiUrl = `${environment.apiUrl}/api/languageResource`;
+    private apiUrl = `${environment.apiUrl}/languageResource`;
 
     constructor(private http: HttpClient) { }
 

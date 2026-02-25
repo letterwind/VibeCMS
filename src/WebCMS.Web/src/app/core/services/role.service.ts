@@ -16,7 +16,7 @@ import
 })
 export class RoleService
 {
-  private readonly basePath = '/api/role';
+  private readonly basePath = '/role';
 
   constructor(private api: ApiService) { }
 

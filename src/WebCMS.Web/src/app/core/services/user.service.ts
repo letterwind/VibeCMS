@@ -15,7 +15,7 @@ import {
   providedIn: 'root'
 })
 export class UserService {
-  private readonly basePath = '/api/user';
+  private readonly basePath = '/user';
 
   constructor(private api: ApiService) {}
 

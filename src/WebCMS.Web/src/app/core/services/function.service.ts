@@ -15,7 +15,7 @@ import { PagedResult, QueryParameters } from '../models/role.model';
 })
 export class FunctionService
 {
-  private readonly basePath = '/api/function';
+  private readonly basePath = '/function';
 
   constructor(private api: ApiService) { }
 

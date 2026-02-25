@@ -25,8 +25,8 @@ export class LanguageService
 
     // API 端點
     // private apiUrl = `${environment.apiUrl}/api/languageResource`;
-    private languageResourceUrl = `${environment.apiUrl}/api/languageResource`;
-    private languageFileUrl = `${environment.apiUrl}/api/languageFile`;
+    private languageResourceUrl = `${environment.apiUrl}/languageResource`;
+    private languageFileUrl = `${environment.apiUrl}/languageFile`;
 
     // 默認語言
     private readonly DEFAULT_LANGUAGE = 'zh-TW';

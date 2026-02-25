@@ -16,8 +16,8 @@ import
 })
 export class ArticleService
 {
-  private readonly basePath = '/api/article';
-  private readonly basePathForTranslation = '/api/articles';
+  private readonly basePath = '/article';
+  private readonly basePathForTranslation = '/articles';
 
   constructor(private api: ApiService) { }
 

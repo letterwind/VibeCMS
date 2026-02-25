@@ -17,7 +17,7 @@ import
 })
 export class CategoryService
 {
-  private readonly basePath = '/api/category';
+  private readonly basePath = '/category';
 
   constructor(private api: ApiService) { }
 
