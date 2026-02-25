@@ -1,0 +1,60 @@
+name: Deploy Web
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'src/WebCMS.Web/**'
+      - '.github/workflows/deploy-web.yml'
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: [self-hosted, windows]
+
+    env:
+      NODE_VERSION: '22.x'
+      DIST_DIR: 'src\WebCMS.Web\dist\webcms-web\browser'
+      DEPLOY_PATH: ${{ secrets.WEB_DEPLOY_PATH }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: src/WebCMS.Web/package-lock.json
+
+      - name: Install dependencies
+        working-directory: src/WebCMS.Web
+        run: npm ci
+
+      - name: Build (Production)
+        working-directory: src/WebCMS.Web
+        run: npm run build -- --configuration production
+
+      - name: Deploy files
+        shell: powershell
+        run: |
+          $dest = "${{ secrets.WEB_DEPLOY_PATH }}"
+          if (-not (Test-Path $dest)) {
+            New-Item -ItemType Directory -Path $dest -Force
+          }
+          # 清除舊檔案（保留設定檔）
+          Get-ChildItem -Path $dest -Exclude "web.config" | Remove-Item -Recurse -Force
+          Copy-Item -Path "${{ env.DIST_DIR }}\*" -Destination $dest -Recurse -Force
+          Write-Host "Deployed to $dest"
+
+      - name: Verify deployment
+        shell: powershell
+        run: |
+          $indexFile = Join-Path "${{ secrets.WEB_DEPLOY_PATH }}" "index.html"
+          if (Test-Path $indexFile) {
+            Write-Host "Deployment verified: index.html exists"
+          } else {
+            Write-Error "Deployment failed: index.html not found"
+            exit 1
+          }

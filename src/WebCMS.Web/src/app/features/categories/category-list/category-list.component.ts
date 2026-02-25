@@ -50,21 +50,25 @@ export class CategoryListComponent implements OnInit {
     this.categoryService.getCategoryTree().subscribe({
       next: (result) => {
         this.categoryTree = result;
+        // Flatten tree in order so list view preserves parent-child ordering
+        this.allCategories = this.flattenTree(result);
+        this.categories = this.allCategories;
       },
       error: (err) => {
         console.error('Failed to load category tree:', err);
       }
     });
+  }
 
-    this.categoryService.getAllCategories().subscribe({
-      next: (result) => {
-        this.allCategories = result;
-        this.categories = result;
-      },
-      error: (err) => {
-        console.error('Failed to load categories:', err);
+  private flattenTree(nodes: CategoryTreeDto[], result: CategoryDto[] = []): CategoryDto[] {
+    for (const node of nodes) {
+      const { children, ...dto } = node;
+      result.push(dto as CategoryDto);
+      if (children && children.length > 0) {
+        this.flattenTree(children, result);
       }
-    });
+    }
+    return result;
   }
 
   search(): void {

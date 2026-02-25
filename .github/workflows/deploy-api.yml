@@ -1,0 +1,86 @@
+name: Deploy API
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'src/WebCMS.Api/**'
+      - 'src/WebCMS.Core/**'
+      - 'src/WebCMS.Infrastructure/**'
+      - '.github/workflows/deploy-api.yml'
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: [self-hosted, windows]
+
+    env:
+      DOTNET_VERSION: '10.0.x'
+      PUBLISH_DIR: 'publish\api'
+      DEPLOY_PATH: ${{ secrets.API_DEPLOY_PATH }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore dependencies
+        run: dotnet restore WebCMS.slnx
+
+      - name: Build
+        run: dotnet build WebCMS.slnx --configuration Release --no-restore
+
+      - name: Publish
+        run: dotnet publish src/WebCMS.Api/WebCMS.Api.csproj --configuration Release --no-build --output ${{ env.PUBLISH_DIR }}
+
+      - name: Stop IIS Website
+        shell: powershell
+        run: |
+          Import-Module WebAdministration
+          $site = Get-Website -Name "${{ secrets.IIS_SITE_NAME }}" -ErrorAction SilentlyContinue
+          if ($site -and $site.State -eq 'Started') {
+            Stop-Website -Name "${{ secrets.IIS_SITE_NAME }}"
+            Write-Host "Stopped IIS site: ${{ secrets.IIS_SITE_NAME }}"
+            Start-Sleep -Seconds 3
+          }
+
+      - name: Deploy files
+        shell: powershell
+        run: |
+          $dest = "${{ secrets.API_DEPLOY_PATH }}"
+          if (-not (Test-Path $dest)) {
+            New-Item -ItemType Directory -Path $dest -Force
+          }
+          Copy-Item -Path "${{ env.PUBLISH_DIR }}\*" -Destination $dest -Recurse -Force
+
+      - name: Apply appsettings (Production)
+        shell: powershell
+        run: |
+          # 若 production appsettings 存放在 secrets 或指定路徑，可在此覆蓋
+          # $config = '${{ secrets.API_APPSETTINGS_PROD }}'
+          # Set-Content -Path "${{ secrets.API_DEPLOY_PATH }}\appsettings.json" -Value $config
+
+      - name: Start IIS Website
+        shell: powershell
+        run: |
+          Import-Module WebAdministration
+          Start-Website -Name "${{ secrets.IIS_SITE_NAME }}"
+          Write-Host "Started IIS site: ${{ secrets.IIS_SITE_NAME }}"
+
+      - name: Health check
+        shell: powershell
+        run: |
+          $url = "${{ secrets.API_HEALTH_CHECK_URL }}"
+          if ($url) {
+            Start-Sleep -Seconds 5
+            $response = Invoke-WebRequest -Uri $url -UseBasicParsing -TimeoutSec 30
+            if ($response.StatusCode -ne 200) {
+              Write-Error "Health check failed: $($response.StatusCode)"
+              exit 1
+            }
+            Write-Host "Health check passed: $($response.StatusCode)"
+          }

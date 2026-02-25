@@ -1,0 +1,9 @@
+# For more info on HTTP files go to https://aka.ms/vs/httpfile
+
+# health check
+GET https://localhost:7001/health
+
+###
+
+# health live check
+GET https://localhost:7001/health/live
