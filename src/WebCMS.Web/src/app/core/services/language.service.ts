@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { map, tap } from 'rxjs/operators';
 import { Language } from '../models/language.model';
 import { LanguageFileExport } from '../models/language-resource.model';
-import { environment } from '../../../environments/environment';
+import { ApiService } from './api.service';
 
 /**
  * 語言管理服務
@@ -25,8 +25,8 @@ export class LanguageService
 
     // API 端點
     // private apiUrl = `${environment.apiUrl}/api/languageResource`;
-    private languageResourceUrl = `${environment.apiUrl}/languageResource`;
-    private languageFileUrl = `${environment.apiUrl}/languageFile`;
+    private languageResourceUrl = `/languageResource`;
+    private languageFileUrl = `/languageFile`;
 
     // 默認語言
     private readonly DEFAULT_LANGUAGE = 'zh-TW';
@@ -44,7 +44,7 @@ export class LanguageService
     // 快取資源載入狀態
     private resourcesLoaded: Map<string, boolean> = new Map();
 
-    constructor(private http: HttpClient)
+    constructor(private api: ApiService)
     {
         this.initializeLanguages();
         // 加載初始語言資源
@@ -64,7 +64,7 @@ export class LanguageService
      */
     private initializeLanguages(): void
     {
-        this.http.get<Language[]>(this.languageResourceUrl).subscribe({
+        this.api.get<Language[]>(this.languageResourceUrl).subscribe({
             next: (languages) =>
             {
                 this.languages$.next(languages);
@@ -235,7 +235,7 @@ export class LanguageService
         try
         {
             // 優先嘗試從 API 加載
-            const resources = await this.http.get<Record<string, any>>(
+            const resources = await this.api.get<Record<string, any>>(
                 `${this.languageFileUrl}/${languageCode}.json`
             ).toPromise();
 
@@ -254,7 +254,7 @@ export class LanguageService
         try
         {
             // 回退到靜態資源
-            const resources = await this.http.get<Record<string, any>>(
+            const resources = await this.api.get<Record<string, any>>(
                 `/assets/i18n/${languageCode}.json`
             ).toPromise();
 

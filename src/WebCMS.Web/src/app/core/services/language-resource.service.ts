@@ -10,6 +10,7 @@ import
     LanguageFileExport
 } from '../models/language-resource.model';
 import { environment } from '../../../environments/environment';
+import { ApiService } from './api.service';
 
 /**
  * 語言資源 API 服務
@@ -19,17 +20,17 @@ import { environment } from '../../../environments/environment';
 })
 export class LanguageResourceService
 {
-    private apiUrl = `${environment.apiUrl}/languageResource`;
+    private basePath = `/languageResource`;
 
-    constructor(private http: HttpClient) { }
+    constructor(private api: ApiService) { }
 
     /**
      * 取得特定語言的所有資源
      */
     getResourcesByLanguage(languageCode: string): Observable<LanguageResourceResponse<LanguageResource[]>>
     {
-        return this.http.get<LanguageResourceResponse<LanguageResource[]>>(
-            `${this.apiUrl}/${languageCode}`
+        return this.api.get<LanguageResourceResponse<LanguageResource[]>>(
+            `${this.basePath}/${languageCode}`
         );
     }
 
@@ -38,8 +39,8 @@ export class LanguageResourceService
      */
     getResourceByKey(languageCode: string, resourceKey: string): Observable<LanguageResourceResponse<LanguageResource>>
     {
-        return this.http.get<LanguageResourceResponse<LanguageResource>>(
-            `${this.apiUrl}/${languageCode}/${resourceKey}`
+        return this.api.get<LanguageResourceResponse<LanguageResource>>(
+            `${this.basePath}/${languageCode}/${resourceKey}`
         );
     }
 
@@ -48,8 +49,8 @@ export class LanguageResourceService
      */
     createResource(request: CreateOrUpdateLanguageResourceRequest): Observable<LanguageResourceResponse<LanguageResource>>
     {
-        return this.http.post<LanguageResourceResponse<LanguageResource>>(
-            this.apiUrl,
+        return this.api.post<LanguageResourceResponse<LanguageResource>>(
+            this.basePath,
             request
         );
     }
@@ -59,8 +60,8 @@ export class LanguageResourceService
      */
     updateResource(id: number, request: CreateOrUpdateLanguageResourceRequest): Observable<LanguageResourceResponse<LanguageResource>>
     {
-        return this.http.put<LanguageResourceResponse<LanguageResource>>(
-            `${this.apiUrl}/${id}`,
+        return this.api.put<LanguageResourceResponse<LanguageResource>>(
+            `${this.basePath}/${id}`,
             request
         );
     }
@@ -70,8 +71,8 @@ export class LanguageResourceService
      */
     deleteResource(id: string): Observable<LanguageResourceResponse<any>>
     {
-        return this.http.delete<LanguageResourceResponse<any>>(
-            `${this.apiUrl}/${id}`
+        return this.api.delete<LanguageResourceResponse<any>>(
+            `${this.basePath}/${id}`
         );
     }
 
@@ -89,8 +90,8 @@ export class LanguageResourceService
             overwrite: request.overwrite || false
         };
 
-        return this.http.post<LanguageResourceResponse<any>>(
-            `${this.apiUrl}/${request.languageCode}/import`,
+        return this.api.post<LanguageResourceResponse<any>>(
+            `${this.basePath}/${request.languageCode}/import`,
             payload
         );
     }
@@ -100,8 +101,8 @@ export class LanguageResourceService
      */
     exportResources(languageCode: string): Observable<LanguageFileExport>
     {
-        return this.http.get<LanguageFileExport>(
-            `${this.apiUrl}/${languageCode}/export`
+        return this.api.get<LanguageFileExport>(
+            `${this.basePath}/${languageCode}/export`
         );
     }
 
@@ -110,8 +111,8 @@ export class LanguageResourceService
      */
     validateLanguageFile(fileContent: Record<string, any>): Observable<LanguageResourceResponse<any>>
     {
-        return this.http.post<LanguageResourceResponse<any>>(
-            `${this.apiUrl}/validate`,
+        return this.api.post<LanguageResourceResponse<any>>(
+            `${this.basePath}/validate`,
             { fileContent }
         );
     }
@@ -124,8 +125,8 @@ export class LanguageResourceService
         resources: CreateOrUpdateLanguageResourceRequest[]
     ): Observable<LanguageResourceResponse<LanguageResource[]>>
     {
-        return this.http.post<LanguageResourceResponse<LanguageResource[]>>(
-            `${this.apiUrl}/${languageCode}/batch`,
+        return this.api.post<LanguageResourceResponse<LanguageResource[]>>(
+            `${this.basePath}/${languageCode}/batch`,
             { resources }
         );
     }

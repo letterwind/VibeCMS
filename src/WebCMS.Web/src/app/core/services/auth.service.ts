@@ -1,7 +1,6 @@
 import { Injectable, signal, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
-import { environment } from '../../../environments/environment';
 import {
   LoginRequest,
   LoginResponse,
@@ -9,12 +8,13 @@ import {
   ChangePasswordRequest,
   UserDto
 } from '../models/auth.model';
+import { ApiService } from './api.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private readonly apiUrl = `${environment.apiUrl}/auth`;
+  private readonly basePath = '/auth';
   private readonly TOKEN_KEY = 'token';
   private readonly REFRESH_TOKEN_KEY = 'refreshToken';
   private readonly USER_KEY = 'user';
@@ -24,14 +24,14 @@ export class AuthService {
   readonly currentUser = this.currentUserSignal.asReadonly();
   readonly isAuthenticated = computed(() => !!this.currentUserSignal());
 
-  constructor(private http: HttpClient) {}
+  constructor(private api: ApiService) {}
 
   getCaptcha(): Observable<CaptchaResponse> {
-    return this.http.get<CaptchaResponse>(`${this.apiUrl}/captcha`);
+    return this.api.get<CaptchaResponse>(`${this.basePath}/captcha`);
   }
 
   login(request: LoginRequest): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${this.apiUrl}/login`, request).pipe(
+    return this.api.post<LoginResponse>(`${this.basePath}/login`, request).pipe(
       tap(response => {
         this.setToken(response.token);
         this.setRefreshToken(response.refreshToken);
@@ -41,13 +41,13 @@ export class AuthService {
   }
 
   logout(): Observable<void> {
-    return this.http.post<void>(`${this.apiUrl}/logout`, {}).pipe(
+    return this.api.post<void>(`${this.basePath}/logout`, {}).pipe(
       tap(() => this.clearAuth())
     );
   }
 
   changePassword(request: ChangePasswordRequest): Observable<void> {
-    return this.http.post<void>(`${this.apiUrl}/change-password`, request);
+    return this.api.post<void>(`${this.basePath}/change-password`, request);
   }
 
   getToken(): string | null {
