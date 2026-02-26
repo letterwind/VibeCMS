@@ -38,6 +38,7 @@ jobs:
         shell: powershell
         run: |
           Import-Module WebAdministration
+          Stop-WebAppPool -Name "${{ secrets.IIS_SITE_NAME }}"
           $site = Get-Website -Name "${{ secrets.IIS_SITE_NAME }}" -ErrorAction SilentlyContinue
           if ($site -and $site.State -eq 'Started') {
             Stop-Website -Name "${{ secrets.IIS_SITE_NAME }}"
@@ -65,6 +66,7 @@ jobs:
         shell: powershell
         run: |
           Import-Module WebAdministration
+          Start-WebAppPool -Name "${{ secrets.IIS_SITE_NAME }}"
           Start-Website -Name "${{ secrets.IIS_SITE_NAME }}"
           Write-Host "Started IIS site: ${{ secrets.IIS_SITE_NAME }}"
 

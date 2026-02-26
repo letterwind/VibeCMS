@@ -7,7 +7,7 @@ import { CategoryService } from '../../../core/services/category.service';
 import { ConfirmDialogService } from '../../../shared/components/confirm-dialog/confirm-dialog.service';
 import { SlidePanelComponent } from '../../../shared/components/slide-panel/slide-panel.component';
 import { ArticleDto, QueryParameters } from '../../../core/models/article.model';
-import { CategoryDto } from '../../../core/models/category.model';
+import { CategoryDto, CategoryTreeDto } from '../../../core/models/category.model';
 import { ArticleFormComponent } from '../article-form/article-form.component';
 import { RouterModule } from '@angular/router';
 import { LanguageService } from '../../../core/services/language.service';
@@ -119,16 +119,27 @@ export class ArticleListComponent implements OnInit
 
   loadCategories(): void
   {
-    this.categoryService.getAllCategories().subscribe({
+    this.categoryService.getCategoryTree().subscribe({
       next: (categories) =>
       {
-        this.categories = categories;
+        this.categories = this.flattenTree(categories);
       },
       error: (err) =>
       {
         console.error('Failed to load categories:', err);
       }
     });
+  }
+
+  private flattenTree(nodes: CategoryTreeDto[], result: CategoryDto[] = []): CategoryDto[] {
+    for (const node of nodes) {
+      const { children, ...dto } = node;
+      result.push(dto as CategoryDto);
+      if (children && children.length > 0) {
+        this.flattenTree(children, result);
+      }
+    }
+    return result;
   }
 
   search(): void

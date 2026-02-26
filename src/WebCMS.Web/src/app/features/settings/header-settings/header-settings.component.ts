@@ -6,6 +6,7 @@ import { HtmlSettingsDto, UpdateHtmlSettingsRequest } from '../../../core/models
 import { EditorComponent } from '@tinymce/tinymce-angular';
 import { TranslatePipe } from '../../../core/pipes/translate.pipe';
 import { LanguageService } from '../../../core/services/language.service';
+import { TinyMceConfigService } from '../../../core/services/tinymce-config.service';
 
 @Component({
   selector: 'app-header-settings',
@@ -27,24 +28,15 @@ export class HeaderSettingsComponent implements OnInit {
   message = '';
   isError = false;
 
-  editorInit: EditorComponent['init'] = {
-    base_url: '/assets/js/tinymce',
-    suffix: '.min',
-    height: 400,
-    menubar: true,
-    plugins: [
-      'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
-      'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
-      'insertdatetime', 'media', 'table', 'help', 'wordcount'
-    ],
-    toolbar: 'undo redo | blocks | bold italic forecolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | link image | code | help',
-    content_style: 'body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; font-size: 14px; }'
-  };
+  editorInit: EditorComponent['init'];
 
   constructor(
     private settingsService: SettingsService,
-    private languageService: LanguageService
-  ) {}
+    private languageService: LanguageService,
+    private tinyMceConfig: TinyMceConfigService
+  ) {
+    this.editorInit = this.tinyMceConfig.getConfig({ menubar: true });
+  }
 
   ngOnInit(): void {
     this.loadSettings();
